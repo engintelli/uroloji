@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Böbrek Tümörü — Doçentlik Çalışma Kartı (EAU 2026)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13110f;
+    --ink2:#1c1916;
+    --surface:#221e1a;
+    --surface2:#2a2521;
+    --line:#3a332c;
+    --cream:#f2ede3;
+    --muted:#a79e90;
+    --muted2:#7d7568;
+    --art:#e2674a;        /* arteriyel kırmızı — high yield */
+    --art-soft:#3a201a;
+    --teal:#54b8a8;       /* klinik teal — nüans */
+    --teal-soft:#16302c;
+    --gold:#d9a441;
+    --gold-soft:#33271320;
+    --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(900px 500px at 85% -10%, #241a16 0%, transparent 55%),
+      radial-gradient(700px 600px at -5% 100%, #15211f 0%, transparent 50%),
+      var(--ink);
+    color:var(--cream);
+    font-family:'Spline Sans',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 16px}
+
+  /* HEADER */
+  header{
+    padding:30px 0 14px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .kicker{
+    font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--art);font-weight:600;margin-bottom:8px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(1.9rem,6vw,3rem);line-height:1.02;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--teal);font-weight:500}
+  .sub{color:var(--muted);margin-top:10px;font-size:.95rem;max-width:60ch}
+  .badge{
+    display:inline-block;margin-top:14px;font-size:.72rem;letter-spacing:.05em;
+    color:var(--teal);border:1px solid var(--teal-soft);background:var(--teal-soft);
+    padding:4px 11px;border-radius:999px;
+  }
+
+  /* TABS */
+  nav{
+    position:sticky;top:0;z-index:40;
+    background:rgba(19,17,15,.86);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+    margin-top:0;
+  }
+  .tabs{
+    display:flex;gap:4px;overflow-x:auto;padding:10px 16px;max-width:920px;margin:0 auto;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;font-family:'Spline Sans';font-weight:600;font-size:.82rem;
+    color:var(--muted);background:transparent;border:1px solid transparent;
+    padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;
+    transition:all .18s ease;letter-spacing:.01em;
+  }
+  .tab:hover{color:var(--cream);background:var(--surface)}
+  .tab.active{color:var(--ink);background:var(--art);border-color:var(--art)}
+  .tab .n{opacity:.55;margin-right:6px;font-variant-numeric:tabular-nums}
+
+  /* PANELS */
+  .panel{display:none;animation:fade .35s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  section.block{padding:26px 0 6px}
+  h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;letter-spacing:-.01em;
+    margin-bottom:4px;display:flex;align-items:baseline;gap:10px;
+  }
+  h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--art);flex:0 0 auto}
+  h3{
+    font-family:'Spline Sans';font-weight:700;font-size:1rem;color:var(--teal);
+    margin:22px 0 8px;letter-spacing:.01em;
+  }
+  p{margin:8px 0;color:#e7e0d4}
+  .lead{color:var(--muted);font-size:.95rem;margin-bottom:6px}
+
+  /* CARDS */
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    padding:18px 18px 16px;margin:14px 0;box-shadow:var(--shadow);
+  }
+  .card h3:first-child{margin-top:0}
+
+  ul{margin:8px 0 8px 2px;list-style:none}
+  li{position:relative;padding-left:20px;margin:7px 0;color:#e7e0d4}
+  li::before{content:"";position:absolute;left:2px;top:11px;width:7px;height:2px;background:var(--art)}
+  li b,p b{color:#fff;font-weight:600}
+  .teal-t{color:var(--teal);font-weight:600}
+  .art-t{color:var(--art);font-weight:600}
+
+  /* CALLOUTS */
+  .callout{
+    border-left:3px solid var(--teal);background:var(--teal-soft);
+    padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0;font-size:.92rem;
+  }
+  .callout.hy{border-color:var(--art);background:var(--art-soft)}
+  .callout.gold{border-color:var(--gold);background:#2a2113}
+  .callout .lbl{
+    display:block;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+    font-weight:700;margin-bottom:5px;
+  }
+  .callout .lbl.t{color:var(--teal)} .callout.hy .lbl{color:var(--art)} .callout.gold .lbl{color:var(--gold)}
+
+  /* TABLES */
+  .tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88rem;display:block;overflow-x:auto}
+  .tbl table{width:100%;border-collapse:collapse;min-width:380px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--art);font-weight:600;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase}
+  td:first-child{font-weight:600;color:#fff;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  /* PILLS / chips */
+  .pills{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+  .pill{font-size:.78rem;background:var(--surface2);border:1px solid var(--line);
+    padding:5px 11px;border-radius:999px;color:#e7e0d4}
+  .pill b{color:var(--teal)}
+
+  /* FLASHCARDS */
+  .fc-stage{padding:26px 0}
+  .fc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .fc-counter{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+  .fc-counter b{color:var(--art);font-size:1.1rem}
+  .fc-cat{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:700}
+  .flashcard{
+    perspective:1600px;height:360px;cursor:pointer;margin-bottom:18px;
+  }
+  .fc-inner{
+    position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flashcard.flipped .fc-inner{transform:rotateY(180deg)}
+  .fc-face{
+    position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:20px;padding:28px;display:flex;flex-direction:column;justify-content:center;
+    border:1px solid var(--line);box-shadow:var(--shadow);overflow-y:auto;
+  }
+  .fc-front{background:linear-gradient(160deg,var(--surface),var(--ink2))}
+  .fc-back{background:linear-gradient(160deg,#241b17,#1a2a27);transform:rotateY(180deg);border-color:var(--teal-soft)}
+  .fc-q{font-family:'Fraunces',serif;font-size:1.3rem;line-height:1.3;font-weight:600}
+  .fc-a{font-size:1rem;color:#eee5d8}
+  .fc-a b{color:var(--teal)}
+  .fc-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:.72rem;color:var(--muted2);letter-spacing:.08em}
+  .fc-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .btn{
+    font-family:'Spline Sans';font-weight:600;font-size:.9rem;cursor:pointer;
+    padding:11px 20px;border-radius:12px;border:1px solid var(--line);
+    background:var(--surface);color:var(--cream);transition:all .16s ease;
+  }
+  .btn:hover{background:var(--surface2);border-color:var(--art)}
+  .btn.primary{background:var(--art);color:var(--ink);border-color:var(--art)}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .progress{height:4px;background:var(--line);border-radius:999px;overflow:hidden;margin-bottom:20px}
+  .progress span{display:block;height:100%;background:linear-gradient(90deg,var(--art),var(--gold));transition:width .4s ease}
+
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted2);font-size:.8rem}
+  .anchor{scroll-margin-top:70px}
+  @media(max-width:520px){
+    .flashcard{height:400px}
+    h2{font-size:1.3rem}
+    .fc-q{font-size:1.15rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">Doçentlik · Üroonkoloji · Sözlü Hazırlık</div>
+    <h1>Böbrek Tümörü <em>renal hücreli karsinom</em></h1>
+    <p class="sub">İskelet → kanıt temeli → kılçıklı köşeler. Tek kartta toplanmış, sözlüde refleks kurmak için tasarlanmış çalışma aracı.</p>
+    <span class="badge">● EAU Guidelines — Limited Update March 2026</span>
+  </div>
+</header>
+
+<nav>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-p="0"><span class="n">01</span>Sınıflama</button>
+    <button class="tab" data-p="1"><span class="n">02</span>Epidemiyoloji & Risk</button>
+    <button class="tab" data-p="2"><span class="n">03</span>Tanı & Biyopsi</button>
+    <button class="tab" data-p="3"><span class="n">04</span>Evreleme & Trombüs</button>
+    <button class="tab" data-p="4"><span class="n">05</span>Prognostik Modeller</button>
+    <button class="tab" data-p="5"><span class="n">06</span>Tedavi</button>
+    <button class="tab" data-p="6"><span class="n">07</span>Takip</button>
+    <button class="tab" data-p="7"><span class="n">★</span>Flashcards</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ PANEL 0 — SINIFLAMA ============ -->
+<div class="panel active" id="p0">
+  <section class="block">
+    <h2><span class="dot"></span>Sınıflama</h2>
+    <p class="lead">İki ayrı şeyi karıştırma: <b>tümör tipi</b> (WHO sınıflaması) vs <b>derece</b> (grade).</p>
+
+    <div class="callout">
+      <span class="lbl t">Seviye lejantı — kartta geçen rozetler</span>
+      <span class="art-t">●&nbsp;Faktüel taban</span> = asistan/uzmanlık düzeyi, akıcı olmalı (cebinde). &nbsp; <span class="teal-t">●&nbsp;Doçentlik çıtası</span> = EAU 2026 + trial + WHO 2022 nüansı. &nbsp; <b>Jüri ipucu</b> = uzmanlık tutanaklarından doğrulanmış soru kalıbı (Özkürkçügil/Dillioğlugil/Çulha/Mutlu/Kara + Doç. Yılmaz/Teke).
+    </div>
+
+    <div class="callout hy">
+      <span class="lbl">Jüri ipucu — sözlü açılışı</span>
+      Önce <b>benign / malign başlık</b> → sonra <b>tüm RCC tiplerini</b> say (jüri hepsini ister). Ardından sık gelen: "RCC <b>neyden köken alır?</b>" ve "<b>papiller tip 2 nereye gitti?</b>" (10.05.2025 tutanağında birebir soruldu).
+    </div>
+
+    <div class="card">
+      <h3>Önce başlık: Benign vs Malign</h3>
+      <div class="tbl"><table>
+        <tr><th>Benign</th><th>Malign (RCC)</th></tr>
+        <tr><td>Onkositom · AML · papiller adenom · metanefrik adenom</td><td>Berrak hücreli · papiller · kromofob · toplayıcı kanal · medüller · moleküler-tanımlı antiteler</td></tr>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <h3>Üç ana RCC tipi</h3>
+      <div class="tbl"><table>
+        <tr><th>Tip</th><th>Sıklık</th><th>İz / not</th></tr>
+        <tr><td>Berrak hücreli (ccRCC)</td><td>%70–85</td><td><i>VHL</i> geni / 3p delesyonu. En sık.</td></tr>
+        <tr><td>Papiller (pRCC)</td><td>%10–15</td><td>WHO 2022 tip 1/2 ayrımını <b>kaldırdı</b>.</td></tr>
+        <tr><td>Kromofob (chRCC)</td><td>%4–5</td><td>En iyi prognoz. <i>Birt-Hogg-Dubé</i> ilişkisi.</td></tr>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <h3>Hücre kökeni <span class="badge" style="margin:0;font-size:.6rem">Jüri ipucu</span></h3>
+      <div class="tbl"><table>
+        <tr><th>Tümör</th><th>Köken</th></tr>
+        <tr><td>ccRCC + papiller</td><td><b>Proksimal tübül</b></td></tr>
+        <tr><td>Kromofob + onkositom</td><td>Toplayıcı kanal <b>interkale hücreleri</b> (distal nefron)</td></tr>
+        <tr><td>Toplayıcı kanal (Bellini) ca</td><td>Toplayıcı kanallar (medüller)</td></tr>
+        <tr><td>Renal medüller ca</td><td>Kaliks/papilla epiteli (orak hücre trait)</td></tr>
+      </table></div>
+    </div>
+
+    <div class="callout hy">
+      <span class="lbl">Jüri ipucu — "VHL'nin RCC'deki rolü / etki mekanizması?"</span>
+      <i>VHL</i> mutasyonu/3p kaybı → VHL proteini yok → <b>HIF (HIF-1α/2α) yıkılamaz</b> → HIF birikir → <b>VEGF, PDGF, TGF-α, EPO, GLUT-1, CAIX</b> aşırı ifade → anormal anjiyogenez + hücre proliferasyonu. Tedavinin (VEGF-TKI, HIF-2α inh. <b>belzutifan</b>) hedef mantığı tam buradan çıkar.
+    </div>
+
+    <div class="callout gold">
+      <span class="lbl">WHO 2022 (5. baskı) — patolojinin güncel hali</span>
+      EAU pocket hâlâ "2017 WHO/ISUP" der ama tipleme standardı <b>WHO 2022</b>'dir. En büyük yenilik: <b>moleküler tanımlı renal karsinom</b> kategorisi.
+    </div>
+
+    <div class="card">
+      <h3>Moleküler tanımlı antiteler</h3>
+      <div class="pills">
+        <span class="pill"><b>TFE3</b>-rearranged (Xp11)</span>
+        <span class="pill"><b>TFEB</b>-altered t(6;11)</span>
+        <span class="pill"><b>ELOC</b> (TCEB1)-mutated</span>
+        <span class="pill"><b>FH</b>-deficient (HLRCC, agresif)</span>
+        <span class="pill"><b>SDH</b>-deficient</span>
+        <span class="pill"><b>ALK</b>-rearranged</span>
+        <span class="pill"><b>SMARCB1</b>-deficient (medüller)</span>
+      </div>
+      <h3>Reklasifikasyonlar</h3>
+      <ul>
+        <li>Papiller RCC <b>artık tip 1/2'ye ayrılmıyor</b> — eski "tip 2"den FH-deficient çıkarıldı.</li>
+        <li>"Clear cell papillary RCC" → <b>clear cell papillary renal cell tümör</b> (indolan, "karsinom" düştü).</li>
+        <li><b>ESC-RCC</b> (eozinofilik solid-kistik) — yeni antite, <b>TSC</b> ile ilişkili.</li>
+        <li>Onkositik tümörler: LOT ve EVT gelişen antiteler.</li>
+        <li>Multiloküler kistik düşük malign potansiyelli neoplazi korundu.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Derecelendirme</h3>
+      <ul>
+        <li><b>WHO/ISUP grade</b> (4 kademeli, nükleol esaslı) → <b>Fuhrman'ın yerine geçti</b>.</li>
+        <li>ccRCC ve pRCC'de uygulanır; <b class="art-t">chRCC'de uygulanmaz</b>.</li>
+      </ul>
+      <h3>Benign en sık</h3>
+      <p>Onkositom · Anjiyomyolipom (AML). Renal kitlelerin ~%15'i benign.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 1 — EPİDEMİYOLOJİ ============ -->
+<div class="panel" id="p1">
+  <section class="block">
+    <h2><span class="dot"></span>Epidemiyoloji & Risk</h2>
+    <div class="card">
+      <ul>
+        <li>Tüm kanserlerin ~<b>%2</b>'si; pik insidans <b>60–70 yaş</b>; <b>E:K ≈ 3:2</b>.</li>
+        <li>Risk üçlüsü: <b>sigara · obezite · hipertansiyon</b>.</li>
+        <li>Edinilmiş kistik böbrek hastalığı / diyaliz → risk artar.</li>
+        <li>Birinci derece akrabada RCC → belirgin risk.</li>
+      </ul>
+    </div>
+    <div class="callout hy">
+      <span class="lbl">Yüksek verim</span>
+      <b>Genel popülasyona tarama YOK.</b> Aile öyküsü olan alt gruplara genetik tarama önerilir.
+    </div>
+    <div class="callout gold">
+      <span class="lbl">Yerel not — Primer on Urology</span>
+      Ders kitabın (Primer 2024/25) farklı rakam verir: <b>E:K ≈ 2:1</b>, erkekte <b>6.</b>, kadında <b>10.</b> en sık kanser (%5 / %3). Sözlüde hocanın kaynağı bu olabilir; iki rakamı da bil, gerekirse "Primer'e göre 2:1, EAU ~3:2" de.
+    </div>
+    <div class="card">
+      <h3>Klinik</h3>
+      <ul>
+        <li>Klasik triad (yan ağrısı + makroskopik hematüri + ele gelen kitle) <b>nadir</b> ve <b class="art-t">kötü prognozla</b> ilişkili.</li>
+        <li>Olguların <b>>%50'si insidental</b>.</li>
+        <li>Paraneoplastik sendrom <b>~%30</b> <span class="teal-t">(jüri tek tek saydırıyor):</span> eritrositoz (<b>EPO↑</b>) · hiperkalsemi (<b>PTHrP</b> / humoral + metastatik) · hipertansiyon (renin↑) · <b>Stauffer sendromu</b> (non-metastatik hepatik disfonksiyon) · galaktore (prolaktin↑) · Cushing (ACTH↑) · enteroglukagon · hipoglisemi (insülin) · jinekomasti/azalmış libido (gonadotropin).</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 2 — TANI & BİYOPSİ ============ -->
+<div class="panel" id="p2">
+  <section class="block">
+    <h2><span class="dot"></span>Tanı & Biyopsi</h2>
+    <div class="card">
+      <h3>Görüntüleme</h3>
+      <ul>
+        <li><b>Çok fazlı kontrastlı BT (batın + toraks)</b> = tanı/evreleme standardı. Enhancement <b>≥15–20 HU</b> → malignite lehine.</li>
+        <li><b>MR</b>: ven trombüsü, kontrast alerjisi, genç hastada radyasyondan kaçınma.</li>
+        <li>Kemik sintigrafisi / PET-BT <b class="art-t">rutin DEĞİL</b>.</li>
+        <li>Beyin görüntüleme: yalnız semptomatik / metastatik tedavi planında.</li>
+        <li>İnsidental <b>cT1a</b> → akciğer met riski düşük, toraks BT atlanabilir.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Renal kitle biyopsisi — performans</h3>
+      <ul>
+        <li>Core biyopsi > FNA, <b>koaksiyel</b> teknik. Track seeding &lt;1/10.000.</li>
+        <li>Tanısal sonuçta duyarlılık <b>%99.1</b>, özgüllük <b>%99.7</b> (Marconi).</li>
+      </ul>
+      <h3>Üç kritik tuzak</h3>
+      <ul>
+        <li><b>Non-diagnostik %14</b> → %90'ı cerrahide malign çıkar; <b>tekrarla</b> (→%80 tanı).</li>
+        <li><b class="art-t">NPV ~%63</b> → negatif biyopsi kanseri <b>DIŞLAMAZ</b>.</li>
+        <li>Grade upgrade ~<b>%16</b> (düşük → yüksek).</li>
+      </ul>
+      <div class="callout hy">
+        <span class="lbl">Onkositik tuzak</span>
+        Biyopsi onkositomu kromofob RCC'den güvenilir ayıramaz (hibrid örtüşme). "Onkositik neoplazi" raporu olanların önemli kısmı rezeksiyonda RCC çıkar.
+      </div>
+      <p class="lead">Komplikasyon düşük: hematom %4.9, ağrı %1.2, hematüri %1.0, pnömotoraks %0.6. Kistik kitle = düşük verim → solid enhancing komponent yoksa biyopsi yapma.</p>
+    </div>
+
+    <div class="card">
+      <h3>Bosniak 2019 <span class="badge" style="margin:0;font-size:.6rem">Jüri: oranlarla saydırıyor</span></h3>
+      <div class="tbl"><table>
+        <tr><th>Sınıf</th><th>Jüri/klasik oran</th><th>2025 meta</th><th>Yönetim</th></tr>
+        <tr><td>I</td><td>~%1</td><td>~%0</td><td>Takip yok</td></tr>
+        <tr><td>II</td><td>~%5</td><td>%9</td><td>Takip yok</td></tr>
+        <tr><td>IIF</td><td>%5–10</td><td>%26</td><td>Görüntüleme ile izlem</td></tr>
+        <tr><td>III</td><td>%50–60</td><td>%80</td><td>Lokalize RCC gibi <b>veya</b> AS</td></tr>
+        <tr><td>IV</td><td>%80–100</td><td>%88</td><td>Lokalize RCC gibi (cerrahi)</td></tr>
+      </table></div>
+      <div class="callout hy">
+        <span class="lbl">Jüri ipucu (21.03.2025)</span>
+        "Bosniak'ı <b>kanserleşme oranlarıyla</b> anlat" diye soruldu. Jüri <b>klasik rakamı</b> (sol kolon) duymak istiyor; doçentlik katmanında 2025 meta-analiz rakamlarını da ekle. Tip 3-4 → cerrahi, tip 1-2 → takip.
+      </div>
+      <p class="lead"><b>2019 değişiklikleri:</b> MR dahil edildi · "algılanan vs ölçülebilir enhancement" ayrımı kalktı (tümü eşit) · sayısal eşikler (kalın duvar/septa ≥4 mm). Amaç: aşırı tedaviyi azaltmak. EAU = <b class="teal-t">v2019</b>.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 3 — EVRELEME & TROMBÜS ============ -->
+<div class="panel" id="p3">
+  <section class="block">
+    <h2><span class="dot"></span>Evreleme & Trombüs</h2>
+    <div class="card">
+      <h3>TNM — UICC/AJCC 8. baskı (2017, güncel)</h3>
+      <div class="tbl"><table>
+        <tr><th>T</th><th>Tanım</th></tr>
+        <tr><td>T1a</td><td>≤4 cm, böbrekle sınırlı</td></tr>
+        <tr><td>T1b</td><td>&gt;4–7 cm</td></tr>
+        <tr><td>T2a</td><td>&gt;7–10 cm</td></tr>
+        <tr><td>T2b</td><td>&gt;10 cm, böbrekle sınırlı</td></tr>
+        <tr><td>T3a</td><td>Renal ven/segmental dal <b>veya</b> pelvikalisiyel sistem <b>veya</b> perirenal/sinüs yağı (Gerota içinde)</td></tr>
+        <tr><td>T3b</td><td>Diyafram <b>altı</b> vena kava</td></tr>
+        <tr><td>T3c</td><td>Diyafram <b>üstü</b> kava <b>veya</b> kava duvarı invazyonu</td></tr>
+        <tr><td>T4</td><td>Gerota <b>dışı</b> (ipsilateral adrenal dahil)</td></tr>
+      </table></div>
+      <p class="lead">N1 = bölgesel LN (N2 yok). M1 = uzak met. Evre: I=T1, II=T2, III=T3 veya N1, IV=T4 veya M1.</p>
+    </div>
+
+    <div class="callout hy">
+      <span class="lbl">Kritik ayrım</span>
+      İpsilateral adrenale <b>komşu invazyon = T4</b>. Adrenale <b>hematojen metastaz = M1</b>.
+    </div>
+
+    <div class="card">
+      <h3>IVC tümör trombüsü — Mayo (Neves-Zincke)</h3>
+      <p class="lead">RCC'nin %4–23'ünde venöz uzanım. Seviyelendirme hepatik venlere ve diyaframa göre.</p>
+      <div class="tbl"><table>
+        <tr><th>Seviye</th><th>Trombüs sınırı</th></tr>
+        <tr><td>0</td><td>Renal vene sınırlı</td></tr>
+        <tr><td>I</td><td>Renal ven üstü IVC'ye <b>≤2 cm</b></td></tr>
+        <tr><td>II</td><td>Renal ven üstü <b>&gt;2 cm</b>, hepatik ven <b>altı</b></td></tr>
+        <tr><td>III</td><td>Hepatik ven seviyesi/üstü, diyafram <b>altı</b> (intrahepatik IVC)</td></tr>
+        <tr><td>IV</td><td>Diyafram <b>üstü</b> / sağ atrium</td></tr>
+      </table></div>
+      <p class="lead">Cerrahi: II–III'te karaciğer mobilizasyonu / Pringle; <b>III–IV'te kardiyopulmoner bypass</b>. Friable trombüs + duvar invazyonu = kötü prognoz. Non-metastatik hastada komplet trombektomi <b class="teal-t">küratif olabilir</b> — seviye IV tek başına kontrendikasyon değil.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 4 — PROGNOSTİK MODELLER ============ -->
+<div class="panel" id="p4">
+  <section class="block">
+    <h2><span class="dot"></span>Prognostik Modeller</h2>
+    <div class="card">
+      <h3>Hangisi nerede</h3>
+      <div class="tbl"><table>
+        <tr><th>Durum</th><th>Model</th></tr>
+        <tr><td>Lokalize/lokal ileri ccRCC</td><td><b>Leibovich</b> (T, N, boyut, grade, nekroz)</td></tr>
+        <tr><td>Lokalize/lokal ileri pRCC</td><td><b>VENUSS</b></td></tr>
+        <tr><td>Lokalize non-ccRCC takip</td><td><b>UISS</b></td></tr>
+        <tr><td>Metastatik (sistemik tedavi)</td><td><b>IMDC</b> (Heng)</td></tr>
+      </table></div>
+    </div>
+
+    <div class="callout hy">
+      <span class="lbl">IMDC — 6 kriter (mutlaka ezber)</span>
+      KPS &lt;80 · tanıdan tedaviye &lt;1 yıl · <b>hiperkalsemi</b> · <b>anemi</b> · <b>nötrofili</b> · <b>trombositoz</b><br>
+      → <b>0</b> favourable · <b>1–2</b> intermediate · <b>≥3</b> poor
+    </div>
+
+    <div class="card">
+      <h3>Kırılganlık & Geriatrik Değerlendirme <span class="badge" style="margin:0;font-size:.62rem">2026 yeni</span></h3>
+      <p>Frailty = çok-sistemli rezerv kaybı; lokalize RCC'de <b class="art-t">bağımsız kötü prognostik faktör</b> (yaştan ayrı eksen).</p>
+      <ul>
+        <li><b>Tara:</b> ≥65 yaşta <b>G8</b> (≤14/17 = riskli) / Mini-COG.</li>
+        <li><b>Değerlendir:</b> riskli ise geriatri ile <b>kapsamlı geriatrik değerlendirme (CGA)</b> — SIOG altın standardı.</li>
+        <li>Nefroloji konsültasyonu: KBH/proteinüri, soliter böbrek, <b>yeni eGFR &lt;45</b>.</li>
+        <li>RCC kararında <b class="teal-t">paylaşılan karar verme (Strong)</b>.</li>
+      </ul>
+      <div class="callout">
+        <span class="lbl t">İncelik</span>
+        Frailty ≠ otomatik watchful waiting. CGA bazen "fit yaşlı"yı ortaya çıkarır → standart tedavi. Karar yaşa değil <b>rezerve</b> göre.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 5 — TEDAVİ ============ -->
+<div class="panel" id="p5">
+  <section class="block">
+    <h2><span class="dot"></span>Tedavi</h2>
+
+    <div class="card">
+      <h3>A · Lokalize hastalık</h3>
+      <ul>
+        <li><b>Parsiyel nefrektomi (NSS) &gt; radikal</b> — T1'de standart, onkolojik eşdeğer, fonksiyon korur.</li>
+        <li>T2 + soliter böbrek/KBH → mümkünse PN.</li>
+        <li><b class="art-t">Rutin adrenalektomi YOK</b>; organ-sınırlı hastalıkta <b class="art-t">genişletilmiş LND YOK</b>.</li>
+        <li>Alternatifler (frail/komorbid + küçük kitle): aktif izlem / ablasyon. <b>RFA &gt;3 cm, kriyo &gt;4 cm rutin önerme.</b></li>
+        <li><b>SBRT</b> — 2026'da cerrahiye uygun olmayan, büyüyen, biyopsi-kanıtlı tümörde (Weak).</li>
+        <li>Watchful waiting ≠ aktif izlem (WW'de takip görüntülemesi yok).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>B · Lokal ileri / venöz trombüs</h3>
+      <p>Non-metastatik hastada tümör + trombüs eksize edilir.</p>
+      <div class="callout hy">
+        <span class="lbl">Adjuvan — tek STRONG: pembrolizumab (KEYNOTE-564)</span>
+        DFS HR <b>0.72</b> · OS HR <b>0.62</b> (P=0.005) · 48-ay OS <b>%91.2 vs %86.0</b> · NNT ~19 (etki mütevazı).<br>
+        Endikasyon: intermediate-high / high risk / M1 NED. RCC'de OS gösteren <b>ilk</b> adjuvan.
+      </div>
+      <p class="lead"><b>Diğerleri NEGATİF:</b> IMmotion010 (atezo), CheckMate 914 (nivo±ipi), PROSPER (perioperatif nivo), tüm adjuvan TKI'lar.</p>
+    </div>
+
+    <div class="card">
+      <h3>C · Metastatik hastalık</h3>
+      <h3 style="color:var(--art)">Sitoredüktif nefrektomi (CN)</h3>
+      <div class="callout hy">
+        <span class="lbl">Jüri ipucu</span>
+        Metastatik tedaviyi anlatırken <b>CN'yi söylemezsen jüri "unuttun" der</b> (Dillioğlugil) — mutlaka say.
+      </div>
+      <ul>
+        <li><b class="art-t">IMDC/MSKCC poor risk → CN YAPMA.</b></li>
+        <li>Intermediate + asemptomatik + sistemik tedavi gerekli → önce sistemik, yanıt verene gecikmeli CN.</li>
+        <li>İyi PS + sistemik tedavi gerekmiyor / rezeke oligomet → hemen CN.</li>
+        <li>Semptomatik (kanama/hematüri/ağrı) + başka seçenek yok → palyatif CN veya <b>embolizasyon</b> (semptom kontrolü &gt;%90).</li>
+      </ul>
+      <p class="lead"><b>CARMENA:</b> sunitinib tek başına (18.4 ay) CN→sunitinib'e (13.9 ay) non-inferior. İkincil CN yapılanlarda 48.5 vs 15.7 ay. <b>SURTIME:</b> gecikmeli (32.4 ay) vs hemen (15.1 ay), CI çakışıyor.</p>
+
+      <h3 style="color:var(--art)">Metastazektomi <span class="badge" style="margin:0;font-size:.6rem">Jüri ipucu</span></h3>
+      <p class="lead">Tam rezeksiyon küratif olabilir. Kriterler: <b>primer kontrol altında</b> · <b>başka metastaz yok</b> · iyi performans · <b>R0 mümkün</b>. En sık: soliter/oligo pulmoner metastaz (wedge rezeksiyon).</p>
+
+      <h3 style="color:var(--art)">Sistemik — birinci basamak ccRCC</h3>
+      <ul>
+        <li><b class="art-t">Kemoterapi YOK.</b> Seçim IMDC riskine göre.</li>
+        <li><b>Intermediate/poor:</b> IO kombinasyonu — nivo+ipi / pembro+axi / lenva+pembro / nivo+cabo.</li>
+        <li><b>Favourable:</b> aynı kombinasyonlar veya sunitinib/pazopanib.</li>
+        <li><b>Sarkomatoid → IO kombinasyonu</b> (özellikle etkili).</li>
+      </ul>
+      <div class="callout">
+        <span class="lbl t">Seçim ekseni</span>
+        Hızlı/semptomatik yük → <b>IO+TKI</b> (hızlı yanıt). Dayanıklı tedavisiz yanıt, int/poor → <b>nivo+ipi</b> (favourable'da OS yararı zayıf). ICI kontrendike → sunitinib/pazopanib, int/poor'da cabozantinib.
+      </div>
+      <p class="lead">CheckMate 214 (nivo+ipi) I/P: OS 46.7 vs 26 ay (HR 0.69). Sonraki basamak: kullanılmamış VEGF-TKI (cabozantinib en sağlam), çok basamak sonrası <b>belzutifan</b> (HIF-2α).</p>
+    </div>
+
+    <div class="card" style="border-color:var(--art)">
+      <h3 style="color:var(--art)">★ İlaç İSİMLERİ — sınıfa göre <span class="badge" style="margin:0;font-size:.6rem">Jüri: isim istiyor</span></h3>
+      <p class="lead">Uzmanlık tutanaklarında "grupları değil <b>ilaçların ismini de</b>" isteniyor. Her sınıftan en az 2 isim hazır olsun:</p>
+      <div class="tbl"><table>
+        <tr><th>Sınıf</th><th>Hedef</th><th>İlaçlar</th></tr>
+        <tr><td>TKI (VEGFR)</td><td>VEGFR</td><td>sunitinib · pazopanib · kabozantinib · aksitinib · lenvatinib · tivozanib · sorafenib</td></tr>
+        <tr><td>mTOR inh.</td><td>mTOR</td><td><b>everolimus · temsirolimus</b></td></tr>
+        <tr><td>ICI (kontrol noktası)</td><td>PD-1/PD-L1/CTLA-4</td><td>nivolumab · pembrolizumab · ipilimumab · avelumab</td></tr>
+        <tr><td>VEGF mAb</td><td>dolaşan VEGF</td><td>bevacizumab (+IFN-α)</td></tr>
+        <tr><td>HIF-2α inh.</td><td>HIF-2α</td><td>belzutifan</td></tr>
+      </table></div>
+      <div class="callout gold">
+        <span class="lbl">Yerel not — Primer vs EAU</span>
+        Primer ders kitabın <b>mTOR inhibitörlerini (everolimus/temsirolimus)</b> ve klasik hedefe-yönelik basamakları içerir. Hoca bu "klasik" çerçeveyi de bekleyebilir; EAU 2026 ise birinci basamağı <b>IO-kombinasyonu</b>na taşıdı. İkisini de bil.
+      </div>
+    </div>
+
+    <div class="callout hy">
+      <span class="lbl">Jüri ipucu — "kullanılmayan ilaç?"</span>
+      Metastatik RCC'de <b>klasik sitotoksik kemoterapi etkisizdir</b> (p-glikoprotein/topoizomeraz II direnci). Tek istisna: sarkomatoid/hızlı progresif tümörde <b>doksorubisin + gemsitabin</b>'in zayıf yararı.
+    </div>
+
+    <div class="card">
+      <h3>D · non-ccRCC & herediter & AML</h3>
+      <ul>
+        <li><b>Papiller:</b> cabozantinib. <b>Kromofob/sınıflanamayan:</b> sunitinib / lenva+pembro.</li>
+        <li><b>VHL:</b> en büyük tümör <b>3 cm'ye</b> kadar izle; cerrahi-dışı → <b>belzutifan</b>.</li>
+        <li><b>HLRCC istisnası:</b> "3 cm izle" geçmez — FH-deficient agresif, erken geniş eksizyon.</li>
+        <li><b>AML:</b> intervansiyon (eşik yok) — büyük tümör, doğurganlık çağı kadın, ağrı/kanama. Embolizasyon vs NSS; unrezektabl/embolize edilemeyen → <b>everolimus</b> (EXIST-2, TSC).</li>
+        <li><b class="art-t">Epiteloid AML tuzağı:</b> malign potansiyelli, metastaz yapabilir.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>E · Nefrometri skorları (PN zorluğu)</h3>
+      <p class="lead"><b>R.E.N.A.L.</b> (Kutikov-Uzzo): Radius · Eksofitik/endofitik · Nearness (toplayıcı sisteme) · Anterior/posterior (son ek) · Location (polar çizgi). Toplam 4–6 düşük, 7–9 orta, 10–12 yüksek; "h" = hiler.</p>
+      <p class="lead"><b>PADUA</b> (Ficarra): benzer + <b>renal sinüs</b> ve <b>toplayıcı sistem tutulumu</b> ayrı kalem. Düşük 6–7, orta 8–9, yüksek ≥10. (3. seçenek: C-index.)</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 6 — TAKİP ============ -->
+<div class="panel" id="p6">
+  <section class="block">
+    <h2><span class="dot"></span>Takip</h2>
+    <div class="card">
+      <ul>
+        <li>Takip <b>nüks riskine</b> dayanır: ccRCC → <b>Leibovich</b>, non-ccRCC → <b>UISS</b>.</li>
+        <li>Düşük risk → seyrek BT; yüksek risk → yoğun BT (3-6-12-18-24… ay).</li>
+        <li>Görüntüleme: toraks + batın BT (alternatif batın MR; genç hastada MR).</li>
+        <li>NSS sonrası <b>&gt;7 cm</b> tümör veya <b>pozitif cerrahi sınır</b> → takibi yoğunlaştır.</li>
+        <li>Başka nedenle ölme riski, RCC nüks riskinin 2 katını aşınca takibi sonlandırmayı düşün.</li>
+      </ul>
+      <div class="callout">
+        <span class="lbl t">2026 notu</span>
+        Bölüm 9 (Takip) 2026'da metin/öneri düzeyinde güncellendi; risk-bazlı mantık korundu.
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL 7 — FLASHCARDS ============ -->
+<div class="panel" id="p7">
+  <section class="fc-stage">
+    <h2><span class="dot"></span>Flashcards</h2>
+    <p class="lead">Karta dokun → çevir. Sözlüde sıkıştırılacağın noktalar.</p>
+    <div class="progress"><span id="fcProg" style="width:0%"></span></div>
+    <div class="fc-top">
+      <span class="fc-cat" id="fcCat">—</span>
+      <span class="fc-counter"><b id="fcNow">1</b> / <span id="fcTot">0</span></span>
+    </div>
+    <div class="flashcard" id="flashcard" onclick="flip()">
+      <div class="fc-inner">
+        <div class="fc-face fc-front"><div class="fc-q" id="fcQ"></div><div class="fc-hint">dokun → cevap</div></div>
+        <div class="fc-face fc-back"><div class="fc-a" id="fcA"></div><div class="fc-hint">dokun → soru</div></div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="btn" onclick="prevCard()">‹ Önceki</button>
+      <button class="btn primary" onclick="nextCard()">Sonraki ›</button>
+      <button class="btn" onclick="shuffleCards()">⤮ Karıştır</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p>Kaynak: EAU Guidelines on Renal Cell Carcinoma — Limited Update March 2026 + temel çalışmalar (KEYNOTE-564, CheckMate 214, CARMENA, SURTIME). Çalışma amaçlı özet; klinik karar için tam metne başvur.</p>
+</footer>
+
+</div>
+
+<script>
+  /* TABS */
+  const tabs=document.querySelectorAll('.tab');
+  const panels=document.querySelectorAll('.panel');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    panels.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('p'+t.dataset.p).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+
+  /* FLASHCARDS */
+  const cards=[
+    {c:'Sınıflama',q:'ccRCC\'nin moleküler temeli nedir?',a:'<b>VHL</b> geni / <b>3p delesyonu</b>. ccRCC tüm RCC\'nin %70–85\'i.'},
+    {c:'Sınıflama',q:'Fuhrman\'ın yerini ne aldı? Hangi tipte uygulanmaz?',a:'<b>WHO/ISUP grade</b> (4 kademeli, nükleol esaslı). <b>chRCC\'de uygulanmaz.</b>'},
+    {c:'Sınıflama',q:'WHO 2022 papiller RCC\'de neyi değiştirdi?',a:'Tip 1 / tip 2 ayrımını <b>kaldırdı</b>; agresif eski "tip 2"lerin önemli kısmı <b>FH-deficient</b> çıktı.'},
+    {c:'Sınıflama',q:'En iyi prognozlu RCC tipi ve sendrom ilişkisi?',a:'<b>Kromofob (chRCC)</b> — <b>Birt-Hogg-Dubé</b> (FLCN).'},
+    {c:'Epidemiyoloji',q:'RCC\'de tarama önerisi nedir?',a:'Genel popülasyona <b>tarama yok</b>. Aile öyküsü olan alt gruba genetik tarama.'},
+    {c:'Epidemiyoloji',q:'Stauffer sendromu nedir?',a:'<b>Paraneoplastik karaciğer disfonksiyonu</b> (metastaz olmadan). Paraneoplazi ~%30.'},
+    {c:'Biyopsi',q:'Negatif renal kitle biyopsisi kanseri dışlar mı?',a:'<b>Hayır.</b> NPV ~%63; non-diagnostik %14 (→%90 malign). Tekrarla.'},
+    {c:'Biyopsi',q:'Biyopside en büyük histolojik ayrım tuzağı?',a:'<b>Onkositom vs kromofob RCC</b> — güvenilir ayrılamaz (hibrid örtüşme).'},
+    {c:'Bosniak',q:'Bosniak III ve IV yönetimi?',a:'<b>III:</b> lokalize RCC gibi <b>veya</b> aktif izlem. <b>IV:</b> lokalize RCC gibi (cerrahi).'},
+    {c:'Bosniak',q:'Bosniak 2019\'un ana yenilikleri?',a:'<b>MR dahil</b> · tüm enhancement eşit (algılanan/ölçülebilir ayrımı kalktı) · sayısal eşikler (duvar/septa ≥4 mm).'},
+    {c:'Evreleme',q:'İpsilateral adrenal: T4 mü M1 mi?',a:'<b>Komşu invazyon = T4</b>. <b>Hematojen metastaz = M1.</b>'},
+    {c:'Evreleme',q:'T3a\'yı oluşturan üç durum?',a:'Renal ven/segmental dal · pelvikalisiyel sistem · perirenal/sinüs yağı (hepsi Gerota içinde).'},
+    {c:'Trombüs',q:'Mayo seviye III ve IV ayrımı?',a:'<b>III:</b> hepatik ven seviyesi/üstü ama <b>diyafram altı</b>. <b>IV:</b> diyafram üstü / sağ atrium.'},
+    {c:'Trombüs',q:'Hangi Mayo seviyelerinde kardiyopulmoner bypass gerekir?',a:'Seviye <b>III–IV</b> (suprahepatik / supradiafragmatik).'},
+    {c:'Prognoz',q:'IMDC\'nin 6 kriteri ve poor risk eşiği?',a:'KPS&lt;80 · &lt;1 yıl · hiperkalsemi · anemi · nötrofili · trombositoz. <b>≥3 = poor.</b>'},
+    {c:'Prognoz',q:'Lokalize ccRCC ve metastatik RCC prognostik modelleri?',a:'Lokalize ccRCC → <b>Leibovich</b>. Metastatik → <b>IMDC</b>.'},
+    {c:'Prognoz',q:'2026 — yaşlı hastada ilk basamak değerlendirme aracı?',a:'<b>G8</b> tarama (≤14/17 riskli) → riskliyse <b>CGA</b>. eGFR&lt;45 → nefroloji.'},
+    {c:'Tedavi',q:'T1 renal kitlede standart cerrahi?',a:'<b>Parsiyel nefrektomi (NSS) &gt; radikal.</b> Onkolojik eşdeğer, fonksiyon korur.'},
+    {c:'Tedavi',q:'RFA ve kriyoablasyon boyut sınırları?',a:'RFA <b>&gt;3 cm</b>, kriyo <b>&gt;4 cm</b> rutin önerilmez.'},
+    {c:'Tedavi',q:'RCC\'de tek STRONG adjuvan öneri ve çalışması?',a:'<b>Pembrolizumab</b> — <b>KEYNOTE-564</b>. OS HR 0.62; 48-ay %91.2 vs %86.'},
+    {c:'Tedavi',q:'KEYNOTE-564 dışındaki adjuvan ICI çalışmaları?',a:'<b>Hepsi negatif:</b> IMmotion010, CheckMate 914, PROSPER. Adjuvan TKI\'lar da.'},
+    {c:'Tedavi',q:'IMDC poor risk metastatik hastada sitoredüktif nefrektomi?',a:'<b>Yapma.</b> (CARMENA: sunitinib 18.4 vs CN+sun 13.9 ay.)'},
+    {c:'Tedavi',q:'Metastatik ccRCC birinci basamak — kemoterapi?',a:'<b>Yok.</b> IMDC riskine göre IO kombinasyonu / TKI.'},
+    {c:'Tedavi',q:'Dayanıklı tedavisiz yanıt isteyen int/poor hastada tercih?',a:'<b>Nivolumab + ipilimumab</b> (CheckMate 214). Favourable\'da OS yararı zayıf.'},
+    {c:'Tedavi',q:'VHL\'de izlem eşiği ve cerrahi-dışı ilaç?',a:'En büyük tümör <b>3 cm</b>\'ye kadar izle; <b>belzutifan</b> (HIF-2α).'},
+    {c:'Tedavi',q:'AML\'de unrezektabl/embolize edilemeyen olguda sistemik tedavi?',a:'<b>Everolimus</b> (mTOR inh.) — EXIST-2, TSC ilişkili.'},
+    {c:'Tedavi',q:'R.E.N.A.L. skoru neyi ölçer?',a:'Parsiyel nefrektomi <b>anatomik zorluğunu</b>: Radius, Eksofitik, Nearness, A/P, Location. 4–6 düşük → 10–12 yüksek.'},
+    {c:'Sınıflama',q:'RCC neyden köken alır? (jüri ipucu)',a:'ccRCC + papiller → <b>proksimal tübül</b>. Kromofob + onkositom → toplayıcı kanal <b>interkale hücreleri</b>.'},
+    {c:'Sınıflama',q:'VHL geninin RCC\'deki rolü / etki mekanizması? (jüri sordu)',a:'VHL kaybı → <b>HIF yıkılamaz</b> → birikir → <b>VEGF/PDGF/EPO/CAIX↑</b> → anjiyogenez + proliferasyon. TKI/belzutifan hedefi buradan.'},
+    {c:'Sınıflama',q:'"Papiller tip 2 nereye gitti?" (10.05.2025 tutanağı)',a:'WHO 2022 tip 1/2 ayrımını kaldırdı; eski agresif "tip 2"nin bir kısmı <b>FH-deficient</b> ve <b>TFE3-rearranged</b> antitelere ayrıldı.'},
+    {c:'Epidemiyoloji',q:'RCC paraneoplastik sendromları? (jüri tek tek istiyor)',a:'EPO↑ (eritrositoz) · PTHrP (hiperkalsemi) · renin↑ (HT) · <b>Stauffer</b> · prolaktin · ACTH/Cushing · enteroglukagon · insülin.'},
+    {c:'Tedavi',q:'Metastatik RCC ilaç sınıfları + 2\'şer isim? (jüri isim istiyor)',a:'<b>TKI:</b> sunitinib, pazopanib. <b>mTOR:</b> everolimus, temsirolimus. <b>ICI:</b> nivolumab, ipilimumab.'},
+    {c:'Tedavi',q:'Metastatik RCC\'de KULLANILMAYAN ilaç sınıfı? (jüri ipucu)',a:'<b>Klasik sitotoksik kemoterapi</b> (etkisiz). İstisna: sarkomatoidde doksorubisin+gemsitabin.'},
+    {c:'Tedavi',q:'Metastazektomi kriterleri? (jüri ipucu)',a:'Primer kontrol · başka met yok · iyi PS · <b>R0 mümkün</b>. En sık soliter pulmoner met.'},
+    {c:'Tedavi',q:'Metastatik tedaviyi anlatırken atlanırsa jürinin "unuttun" dediği basamak?',a:'<b>Sitoredüktif nefrektomi.</b> Mutlaka say (poor riskte yapılmaz nüansıyla).'},
+    {c:'Çıkmış MCQ',q:'Diyafram altı vena kavaya uzanan RCC — klinik T?',a:'<b>T3b.</b> (Diyafram üstü/kava duvarı = T3c.)'},
+    {c:'Çıkmış MCQ',q:'Von Hippel–Lindau ile en çok ilişkili neoplazi?',a:'<b>Berrak hücreli renal karsinom (ccRCC).</b>'},
+    {c:'Çıkmış MCQ',q:'Adjuvan pembrolizumabdan en çok kim fayda görür?',a:'<b>Sarkomatoid farklılaşmalı ccRCC</b> / yüksek-riskli ccRCC (ISUP 4, büyük, pT3+, N+).'},
+    {c:'Çıkmış MCQ',q:'4 mm kontrastlanan tek septumlu 3.9 cm kistik lezyon — sınıf ve yönetim?',a:'<b>Bosniak III</b> → cerrahi <b>veya</b> aktif izlem.'},
+    {c:'Takip',q:'NSS sonrası takibi yoğunlaştıran iki faktör?',a:'<b>&gt;7 cm</b> tümör veya <b>pozitif cerrahi sınır</b>.'},
+  ];
+  let order=cards.map((_,i)=>i), idx=0;
+  const $=id=>document.getElementById(id);
+  function render(){
+    const card=cards[order[idx]];
+    $('flashcard').classList.remove('flipped');
+    setTimeout(()=>{
+      $('fcQ').innerHTML=card.q; $('fcA').innerHTML=card.a; $('fcCat').textContent=card.c;
+    },120);
+    $('fcNow').textContent=idx+1; $('fcTot').textContent=cards.length;
+    $('fcProg').style.width=((idx+1)/cards.length*100)+'%';
+  }
+  function flip(){$('flashcard').classList.toggle('flipped')}
+  function nextCard(){idx=(idx+1)%cards.length;render()}
+  function prevCard(){idx=(idx-1+cards.length)%cards.length;render()}
+  function shuffleCards(){for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}idx=0;render()}
+  render();
+</script>
+</body>
+</html>

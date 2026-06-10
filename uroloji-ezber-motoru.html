@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Üroloji Ezber Motoru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#10171a;
+  --bg-2:#16211f;
+  --panel:#1a2826;
+  --panel-2:#213330;
+  --line:#2c3f3b;
+  --parchment:#ece3d0;
+  --parchment-dim:#b6b09e;
+  --teal:#3fb6a8;
+  --teal-deep:#1f6f6a;
+  --orange:#e0863e;
+  --orange-soft:#c97b3c;
+  --red:#d96a5a;
+  --amber:#e0b54a;
+  --green:#5fb98a;
+  --shadow:0 10px 40px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--parchment);
+  font-family:'Public Sans',-apple-system,system-ui,sans-serif;
+  font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.app{display:flex;height:100vh;height:100dvh}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:300px;flex-shrink:0;
+  background:linear-gradient(180deg,var(--bg-2),var(--bg));
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  height:100%;
+}
+.sb-head{
+  padding:22px 20px 16px;border-bottom:1px solid var(--line);
+}
+.sb-head h1{
+  font-family:'Fraunces',serif;font-weight:600;font-size:21px;
+  letter-spacing:.3px;line-height:1.1;color:var(--parchment);
+}
+.sb-head .sub{font-size:11.5px;color:var(--parchment-dim);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px}
+.sb-progress{margin-top:14px}
+.sb-progress .bar{height:6px;background:var(--panel-2);border-radius:6px;overflow:hidden}
+.sb-progress .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--teal-deep),var(--teal));border-radius:6px;transition:width .4s}
+.sb-progress .lbl{font-size:11px;color:var(--parchment-dim);margin-top:6px;display:flex;justify-content:space-between}
+
+.sb-scroll{overflow-y:auto;flex:1;padding:8px 0 40px;-webkit-overflow-scrolling:touch}
+.block{margin:6px 0}
+.block-title{
+  font-size:11px;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--teal);font-weight:700;padding:14px 20px 6px;
+}
+.topic-item{
+  padding:9px 20px 9px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;
+  border-left:3px solid transparent;transition:background .15s;
+}
+.topic-item:hover{background:var(--panel)}
+.topic-item.active{background:var(--panel);border-left-color:var(--orange)}
+.topic-item .dot{width:8px;height:8px;border-radius:50%;background:var(--panel-2);flex-shrink:0}
+.topic-item.lvl-1 .dot{background:var(--red)}
+.topic-item.lvl-2 .dot{background:var(--amber)}
+.topic-item.lvl-3 .dot{background:var(--green)}
+.topic-item .name{font-size:14.5px;flex:1;line-height:1.25}
+.topic-item .pct{font-size:11px;color:var(--parchment-dim);font-variant-numeric:tabular-nums}
+
+/* ---------- MAIN ---------- */
+.main{flex:1;display:flex;flex-direction:column;height:100%;min-width:0}
+.topbar{
+  padding:16px 28px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--bg-2);
+}
+.menu-btn{display:none;background:var(--panel);border:1px solid var(--line);color:var(--parchment);
+  width:42px;height:42px;border-radius:11px;font-size:20px;cursor:pointer;flex-shrink:0}
+.tb-title{flex:1;min-width:0}
+.tb-title .eyebrow{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);font-weight:700}
+.tb-title h2{font-family:'Fraunces',serif;font-weight:600;font-size:23px;line-height:1.15;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.modes{display:flex;gap:6px;background:var(--panel);padding:5px;border-radius:13px;border:1px solid var(--line)}
+.mode-btn{
+  border:none;background:transparent;color:var(--parchment-dim);
+  font-family:inherit;font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;
+  white-space:nowrap;transition:all .15s;
+}
+.mode-btn.on{background:var(--teal-deep);color:#fff}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px 80px;-webkit-overflow-scrolling:touch}
+.content-inner{max-width:760px;margin:0 auto}
+
+.subtopics{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;
+}
+.chip{
+  font-size:12.5px;padding:6px 12px;border-radius:20px;
+  background:var(--panel);border:1px solid var(--line);color:var(--parchment-dim);
+}
+
+.filterbar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filt{border:1px solid var(--line);background:var(--panel);color:var(--parchment-dim);
+  font-family:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:9px;cursor:pointer}
+.filt.on{background:var(--orange);color:#241308;border-color:var(--orange)}
+.filt .n{opacity:.7;margin-left:5px;font-variant-numeric:tabular-nums}
+
+.catgroup{margin-bottom:26px}
+.cat-h{font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);font-weight:700;
+  margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.cat-h::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  margin-bottom:12px;overflow:hidden;transition:border-color .2s;
+}
+.card.revealed{border-color:var(--teal-deep)}
+.card .q{
+  padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:13px;
+}
+.card .q .qnum{font-family:'Fraunces',serif;font-size:13px;color:var(--orange);font-weight:600;
+  flex-shrink:0;padding-top:1px;min-width:20px}
+.card .q .qtext{flex:1;font-size:16px;font-weight:600;line-height:1.4}
+.card .q .flag{font-size:11px;color:var(--amber);background:rgba(224,181,74,.12);
+  padding:2px 8px;border-radius:6px;font-weight:700;letter-spacing:.5px;flex-shrink:0;align-self:center}
+.card .q .chev{color:var(--parchment-dim);font-size:13px;transition:transform .2s;flex-shrink:0;align-self:center}
+.card.revealed .q .chev{transform:rotate(90deg)}
+
+.answer{display:none;padding:0 20px 18px 53px}
+.card.revealed .answer{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.answer .a-body{
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:15px 17px;
+  font-size:14.5px;line-height:1.65;color:#ddd6c4;
+}
+.answer .a-body strong{color:var(--parchment);font-weight:700}
+.answer .a-body em{color:var(--teal);font-style:normal;font-weight:600}
+.answer .a-body .warn{color:var(--amber);font-weight:600}
+.answer .a-body ul{margin:7px 0 7px 4px;list-style:none}
+.answer .a-body li{padding-left:16px;position:relative;margin-bottom:5px}
+.answer .a-body li::before{content:"▸";position:absolute;left:0;color:var(--teal)}
+.answer .a-body .step{display:flex;gap:9px;margin-bottom:6px;align-items:baseline}
+.answer .a-body .step b{color:var(--orange);font-family:'Fraunces',serif;flex-shrink:0}
+
+.conf{display:flex;gap:8px;margin-top:13px}
+.conf button{
+  flex:1;border:1px solid var(--line);background:var(--bg);color:var(--parchment-dim);
+  font-family:inherit;font-size:12.5px;font-weight:600;padding:9px;border-radius:9px;cursor:pointer;
+  transition:all .15s;
+}
+.conf button[data-c="1"].sel{background:rgba(217,106,90,.18);border-color:var(--red);color:var(--red)}
+.conf button[data-c="2"].sel{background:rgba(224,181,74,.16);border-color:var(--amber);color:var(--amber)}
+.conf button[data-c="3"].sel{background:rgba(95,185,138,.16);border-color:var(--green);color:var(--green)}
+
+.blank-note{
+  background:rgba(224,134,62,.08);border:1px dashed var(--orange-soft);border-radius:12px;
+  padding:14px 16px;margin-bottom:20px;font-size:13.5px;color:var(--parchment-dim);line-height:1.55;
+}
+.blank-note b{color:var(--orange);font-weight:700}
+
+.empty{text-align:center;padding:60px 20px;color:var(--parchment-dim)}
+.empty .big{font-family:'Fraunces',serif;font-size:22px;color:var(--green);margin-bottom:8px}
+
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
+
+/* ---------- iPad portrait & phone ---------- */
+@media(max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:50;transform:translateX(-100%);
+    transition:transform .25s;box-shadow:var(--shadow);width:290px}
+  .sidebar.open{transform:none}
+  .scrim.open{display:block}
+  .menu-btn{display:block}
+  .content{padding:20px 18px 80px}
+  .topbar{padding:14px 16px}
+  .tb-title h2{font-size:20px}
+  .mode-btn{padding:8px 11px;font-size:12px}
+}
+@media(max-width:520px){
+  .modes{order:3;width:100%}
+  .mode-btn{flex:1}
+}
+.sb-scroll::-webkit-scrollbar,.content::-webkit-scrollbar{width:8px}
+.sb-scroll::-webkit-scrollbar-thumb,.content::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <h1>Üroloji Ezber Motoru</h1>
+      <div class="sub">Doçentlik · Sözlü</div>
+      <div class="sb-progress">
+        <div class="bar"><span id="globalBar" style="width:0%"></span></div>
+        <div class="lbl"><span id="globalLbl">0 kart sağlam</span><span id="globalPct">0%</span></div>
+      </div>
+    </div>
+    <div class="sb-scroll" id="nav"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <div class="tb-title">
+        <div class="eyebrow" id="tbEyebrow">Onkoloji</div>
+        <h2 id="tbTitle">Prostat Kanseri</h2>
+      </div>
+      <div class="modes">
+        <button class="mode-btn on" data-mode="read" id="mRead">Okuma</button>
+        <button class="mode-btn" data-mode="blank" id="mBlank">Boş kağıt</button>
+      </div>
+    </div>
+    <div class="content">
+      <div class="content-inner" id="content"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ============ VERİ ============
+   q = ezber çıpası (boş kağıttan üretilecek)
+   a = doğru cevap (kendini denetleme)
+   flag:true = trial/öneri değişebilir → atlas + EAU 2026 ile teyit et
+   Evreleme/sınıflama içeriği TNM 8. baskı & EAU yapısına göre; tedavi sıralamaları
+   güncellik açısından ⚠ ile işaretli — kendi atlasınla çapraz oku.
+============================================ */
+const DATA=[
+{block:"Onkoloji",topic:"Prostat Kanseri",subs:["TNM & ISUP","Risk grupları","Lokalize tedavi","mHSPC / mCRPC","Tarama & tanı"],cards:[
+ {cat:"Evreleme",q:"Prostat kanseri klinik T evrelemesi (T1–T4)",a:"<div class='step'><b>T1</b> Klinik saptanamayan tümör (palpe/görüntülenemeyen). <em>T1a</em> TUR'da ≤%5; <em>T1b</em> >%5; <em>T1c</em> iğne biyopsi (PSA yüksekliğiyle).</div><div class='step'><b>T2</b> Prostata sınırlı. <em>T2a</em> ≤yarım lob; <em>T2b</em> >yarım tek lob; <em>T2c</em> her iki lob.</div><div class='step'><b>T3</b> Kapsül dışı. <em>T3a</em> ekstraprostatik uzanım / mesane boynu mikroskopik; <em>T3b</em> seminal vezikül invazyonu.</div><div class='step'><b>T4</b> Komşu yapı invazyonu: eksternal sfinkter, rektum, levator, mesane, pelvik duvar.</div>"},
+ {cat:"Sınıflama",q:"ISUP Grade Group ↔ Gleason karşılığı",a:"<div class='step'><b>GG1</b> Gleason ≤6 (3+3)</div><div class='step'><b>GG2</b> 3+4 = 7</div><div class='step'><b>GG3</b> 4+3 = 7</div><div class='step'><b>GG4</b> 8 (4+4, 3+5, 5+3)</div><div class='step'><b>GG5</b> 9–10</div><span class='warn'>⚠ Tuzak: 3+4 ile 4+3 ikisi de 7 ama farklı grup — baskın patern önemli.</span>"},
+ {cat:"Risk grupları",q:"EAU lokalize prostat kanseri risk grupları",a:"<ul><li><strong>Düşük:</strong> PSA <10 <em>ve</em> GG1 <em>ve</em> cT1–2a</li><li><strong>Orta:</strong> PSA 10–20 <em>veya</em> GG2–3 <em>veya</em> cT2b</li><li><strong>Yüksek:</strong> PSA >20 <em>veya</em> GG4–5 <em>veya</em> ≥cT2c</li><li><strong>Lokal ileri:</strong> herhangi cT3–4 ya da cN+</li></ul>Risk gruplarında kriterler <strong>VEYA</strong> mantığıyla; en kötü parametre grubu belirler."},
+ {cat:"Tedavi sırası",q:"Lokalize hastalıkta tedavi seçenekleri (risk bazlı)",a:"<ul><li><strong>Düşük risk:</strong> aktif izlem (öncelik), RP veya RT alternatif</li><li><strong>Orta risk:</strong> RP ± LND, veya RT + kısa süreli ADT (4–6 ay); seçili olguda aktif izlem</li><li><strong>Yüksek / lokal ileri:</strong> RP + genişletilmiş LND, veya RT + uzun süreli ADT (2–3 yıl) ± abirateron</li></ul><span class='warn'>⚠ ADT süresi ve abirateron eklenmesi güncel öneri — atlas/EAU 2026 teyit.</span>",flag:true},
+ {cat:"Tedavi sırası",q:"mHSPC: tedavi yoğunlaştırma seçenekleri",a:"ADT omurga + yoğunlaştırma şart (tek başına ADT yetersiz):<ul><li>ADT + ARPI (abirateron / apalutamid / enzalutamid)</li><li>ADT + dosetaksel (yüksek hacim)</li><li><strong>Triplet:</strong> ADT + dosetaksel + abirateron (PEACE-1) veya + darolutamid (ARASENS)</li></ul><span class='warn'>⚠ Hacim/risk tanımı ve triplet endikasyonu kritik tuzak — atlas/EAU teyit.</span>",flag:true},
+ {cat:"Tedavi sırası",q:"mCRPC: ardışık tedavi seçenekleri",a:"Önceki tedaviye göre dizilir:<ul><li>ARPI (abirateron / enzalutamid)</li><li>Dosetaksel → kabazitaksel</li><li>Radium-223 (yalnız kemik metastazı, viseral yok)</li><li>Lu-177-PSMA (PSMA+ ; VISION/PSMAfore)</li><li>PARP inhibitörü — HRR/BRCA mutasyonunda (olaparib, talazoparib)</li></ul><span class='warn'>⚠ Sıralama ve biyobelirteç seçimi sürekli güncelleniyor — atlas/EAU teyit.</span>",flag:true},
+ {cat:"Endikasyon",q:"Prostat biyopsisi öncesi mpMRI ve PI-RADS mantığı",a:"Biyopsi öncesi mpMRI önerilir; <strong>PI-RADS ≥3</strong> hedefe yönelik (füzyon) biyopsi + sistematik biyopsi. PI-RADS 1–2 + düşük klinik şüphede biyopsiden kaçınılabilir. <em>(Detay atlas/EAU 2026)</em>",flag:true},
+]},
+
+{block:"Onkoloji",topic:"Mesane Kanseri",subs:["TNM","NMIBC risk","NMIBC tedavi","MIBC tedavi","Takip"],cards:[
+ {cat:"Evreleme",q:"Mesane kanseri T evrelemesi",a:"<div class='step'><b>Ta</b> Noninvaziv papiller</div><div class='step'><b>Tis</b> Karsinoma in situ (düz, yüksek dereceli)</div><div class='step'><b>T1</b> Subepitelyal bağ dokusu (lamina propria) invazyonu</div><div class='step'><b>T2</b> Muscularis propria. <em>T2a</em> iç yarı, <em>T2b</em> dış yarı</div><div class='step'><b>T3</b> Perivezikal yağ. <em>T3a</em> mikroskopik, <em>T3b</em> makroskopik (ekstravezikal kitle)</div><div class='step'><b>T4</b> <em>T4a</em> prostat stroma/uterus/vajina; <em>T4b</em> pelvik/abdominal duvar</div><span class='warn'>⚠ Sınır: T1 (NMIBC) ↔ T2 (MIBC) — kasa invazyon her şeyi değiştirir.</span>"},
+ {cat:"Sınıflama",q:"NMIBC EAU risk grupları (4 grup)",a:"<ul><li><strong>Düşük:</strong> primer, tek, TaG1/LG, <3cm, CIS yok</li><li><strong>Orta:</strong> düşük ve yüksek arası kalan olgular</li><li><strong>Yüksek:</strong> T1, ya da HG/G3, ya da CIS, ya da (çok+rekürren+≥3cm TaLG)</li><li><strong>Çok yüksek:</strong> en agresif alt grup (ör. T1G3 + CIS, yaygın/multifokal)</li></ul><span class='warn'>⚠ Tam kriter tablosu EAU NMIBC scoring — atlasından üret.</span>",flag:true},
+ {cat:"Tedavi sırası",q:"NMIBC risk-uyarlı adjuvan tedavi",a:"<ul><li><strong>Düşük:</strong> TUR + tek doz erken intravezikal kemoterapi (24 saat içinde)</li><li><strong>Orta:</strong> tek doz + 1 yıl indüksiyon/idame KT veya BCG</li><li><strong>Yüksek:</strong> BCG indüksiyon + 1–3 yıl idame; re-TUR endike</li><li><strong>Çok yüksek / BCG yetmezliği:</strong> erken radikal sistektomi tartış</li></ul>",flag:true},
+ {cat:"Endikasyon",q:"re-TUR (ikinci bakı TUR) endikasyonları",a:"<ul><li>İlk TUR'da kas dokusu yoksa (T1 hariç düşük risk Ta dışında)</li><li>Tüm T1 tümörler</li><li>Yüksek dereceli / G3 tümörler (Tis hariç)</li><li>İnkomplet ilk rezeksiyon</li></ul>Genellikle 2–6 hafta içinde yapılır."},
+ {cat:"Tedavi sırası",q:"MIBC (kasa invaziv) tedavi algoritması",a:"<div class='step'><b>1</b> Sisplatin-uygun: <strong>neoadjuvan sisplatin-bazlı KT</strong> (ddMVAC veya gemsitabin-sisplatin)</div><div class='step'><b>2</b> Radikal sistektomi + genişletilmiş pelvik LND + üriner diversiyon</div><div class='step'><b>3</b> Mesane koruyucu alternatif: trimodal tedavi (maksimal TUR + eşzamanlı KRT)</div><span class='warn'>⚠ NIAGARA (perioperatif durvalumab) güncel ekleme — atlas/EAU 2026 teyit.</span>",flag:true},
+ {cat:"İlaç & doz",q:"Sisplatin uygunluk (Galsky) kriterleri",a:"Sisplatine <strong>uygun değil</strong> sayılır: ECOG ≥2, <em>tek doz</em> için GFR <60 mL/dk, evre ≥2 işitme kaybı/nöropati, NYHA ≥III kalp yetmezliği.<br><span class='warn'>⚠ Jüri tuzağı: GFR >60 eşiği <strong>tek doz</strong> sisplatin içindir; NIAGARA bölünmüş dozda CrCl 40–60'ı kullanmıştır.</span>"},
+]},
+
+{block:"Onkoloji",topic:"Böbrek Tümörleri (RCC)",subs:["TNM","Histoloji","Lokalize tedavi","Metastatik","İmaging"],cards:[
+ {cat:"Evreleme",q:"RCC T evrelemesi",a:"<div class='step'><b>T1</b> ≤7cm, böbreğe sınırlı. <em>T1a</em> ≤4cm; <em>T1b</em> 4–7cm</div><div class='step'><b>T2</b> >7cm, böbreğe sınırlı. <em>T2a</em> 7–10cm; <em>T2b</em> >10cm</div><div class='step'><b>T3</b> majör ven/perinefritik doku. <em>T3a</em> renal ven/pelvikalisyel/perinefritik yağ; <em>T3b</em> diyafram <u>altı</u> VCİ; <em>T3c</em> diyafram <u>üstü</u> VCİ veya VCİ duvarı</div><div class='step'><b>T4</b> Gerota fasyası dışı (ipsilateral adrenal dahil)</div>"},
+ {cat:"Sınıflama",q:"En sık RCC histolojik alt tipleri ve özellikleri",a:"<ul><li><strong>Berrak hücreli (~%70–80):</strong> VHL geni, en sık metastaz yapan</li><li><strong>Papiller (~%10–15):</strong> tip 1 / tip 2; MET</li><li><strong>Kromofob (~%5):</strong> en iyi prognoz; Birt-Hogg-Dubé</li><li><strong>Toplayıcı kanal / medüller:</strong> agresif, nadir</li></ul>"},
+ {cat:"Tedavi sırası",q:"Lokalize RCC tedavi seçimi (T evresine göre)",a:"<ul><li><strong>T1a (≤4cm):</strong> parsiyel nefrektomi önceliği; alternatif ablasyon, aktif izlem (yaşlı/komorbid)</li><li><strong>T1b–T2:</strong> mümkünse parsiyel, değilse radikal nefrektomi</li><li><strong>T3–T4:</strong> radikal nefrektomi ± trombektomi</li></ul>Rutin adrenalektomi ve genişletilmiş LND artık standart değil."},
+ {cat:"Sınıflama",q:"IMDC (metastatik RCC) risk faktörleri",a:"6 faktör: <ul><li>KPS <%80</li><li>Tanıdan tedaviye <1 yıl</li><li>Hgb < normal alt sınır</li><li>Düzeltilmiş Ca > normal üst sınır</li><li>Nötrofil > üst sınır</li><li>Trombosit > üst sınır</li></ul><strong>0 = iyi · 1–2 = orta · ≥3 = kötü</strong> prognoz."},
+ {cat:"Tedavi sırası",q:"Metastatik RCC birinci basamak (IMDC'ye göre)",a:"<ul><li><strong>İyi risk:</strong> IO+TKİ (pembrolizumab+aksitinib, vb.) ya da TKİ monoterapi seçili olguda</li><li><strong>Orta/kötü risk:</strong> ipilimumab+nivolumab, ya da IO+TKİ kombinasyonları (pembro+lenva, nivo+kabo, pembro+aksi)</li></ul>Sitoredüktif nefrektomi seçili olguda.<span class='warn'>⚠ Kombinasyonlar sürekli güncelleniyor — atlas/EAU teyit.</span>",flag:true},
+]},
+
+{block:"Onkoloji",topic:"Testis Tümörleri",subs:["TNM & S","Histoloji","Seminom tedavi","NSGCT tedavi","Belirteçler"],cards:[
+ {cat:"Sınıflama",q:"Testis tümör belirteçleri ve yorumu",a:"<ul><li><strong>AFP:</strong> yolk sac, embriyonel; <em>saf seminomda yükselmez</em> (yükselirse NSGCT komponenti var demektir)</li><li><strong>βhCG:</strong> koryokarsinom (çok yüksek), bazı seminomlarda hafif</li><li><strong>LDH:</strong> tümör yükü/nonspesifik</li></ul>"},
+ {cat:"Evreleme",q:"Testis kanseri klinik evreleme (genel)",a:"<div class='step'><b>Evre I</b> Testise sınırlı (± retroperiton görüntü negatif)</div><div class='step'><b>Evre II</b> Retroperitoneal lenf nodu (IIa ≤2cm, IIb 2–5cm, IIc >5cm)</div><div class='step'><b>Evre III</b> Uzak metastaz / yüksek belirteç</div>S kategorisi (serum belirteç) evrelemenin ayrılmaz parçasıdır."},
+ {cat:"Tedavi sırası",q:"Seminom evreye göre tedavi",a:"<ul><li><strong>Evre I:</strong> orşiektomi + aktif izlem (öncelik); alternatif tek doz karboplatin</li><li><strong>Evre IIa/IIb:</strong> RT veya KT</li><li><strong>İleri / iyi prognoz:</strong> 3×BEP veya 4×EP</li><li><strong>Orta prognoz:</strong> 4×BEP</li></ul><span class='warn'>⚠ Jüri tuzağı: <strong>orta prognoz seminom = 4×BEP</strong> (3×BEP DEĞİL).</span>"},
+ {cat:"Tedavi sırası",q:"NSGCT (nonseminom) IGCCCG prognoz → KT",a:"<div class='step'><b>İyi prognoz</b> 3×BEP (veya 4×EP)</div><div class='step'><b>Orta prognoz</b> 4×BEP</div><div class='step'><b>Kötü prognoz</b> 4×BEP</div>Evre I NSGCT: aktif izlem / RPLND / adjuvan KT (risk bazlı, LVI önemli)."},
+ {cat:"Endikasyon",q:"Orşiektomi öncesi sperm bankalama ve protez",a:"Tedaviden (orşiektomi/KT/RT) <strong>önce</strong> sperm kriyoprezervasyonu önerilir. Testis protezi opsiyonu hastaya sunulmalı. <em>(EAU testis kanseri kılavuzu)</em>"},
+]},
+
+{block:"Onkoloji",topic:"Penis Kanseri",subs:["TNM","Patoloji","Primer tedavi","Lenf nodu","Takip"],cards:[
+ {cat:"Evreleme",q:"Penis kanseri T evrelemesi (özet)",a:"<div class='step'><b>Tis</b> CIS</div><div class='step'><b>Ta</b> noninvaziv verrüköz</div><div class='step'><b>T1</b> subepitelyal (T1a düşük risk: LVI yok, grade düşük; T1b yüksek risk)</div><div class='step'><b>T2</b> korpus spongiozum/üretra</div><div class='step'><b>T3</b> korpus kavernozum</div><div class='step'><b>T4</b> komşu yapılar</div><span class='warn'>⚠ Tam T2/T3 ayrımı 8. baskıda revize — atlas teyit.</span>",flag:true},
+ {cat:"Tedavi sırası",q:"Primer tümör organ koruyucu tedavi seçenekleri",a:"<ul><li>Tis/Ta: topikal (5-FU/imikimod), lazer, glans yüzeyel rezeksiyon</li><li>T1–T2 glans: glansektomi / parsiyel penektomi (≥negatif cerrahi sınır)</li><li>İleri: parsiyel/total penektomi</li></ul>Organ koruma önceliklidir."},
+ {cat:"Endikasyon",q:"İnguinal lenf nodu yönetimi prensibi",a:"Lenf nodu durumu en güçlü prognostik faktör. <ul><li>Palpe edilemeyen + yüksek risk primer (≥T1b): invaziv evreleme (sentinel nod / modifiye inguinal LND)</li><li>Palpe edilen: histoloji + LND</li></ul>Erken lenf nodu cerrahisi sağkalımı belirler."},
+]},
+
+{block:"Onkoloji",topic:"Üst Üriner Sistem Ürotelyal Ca (UTUC)",subs:["Risk grupları","Tanı","Tedavi","Takip"],cards:[
+ {cat:"Sınıflama",q:"UTUC düşük vs yüksek risk ayrımı",a:"<strong>Düşük risk</strong> (hepsi gerekir): tek odak, <2cm, düşük dereceli sitoloji+biyopsi, BT'de invaziv görünüm yok.<br><strong>Yüksek risk</strong> (herhangi biri): hidronefroz, >2cm, yüksek dereceli, multifokal, mesane Ca öyküsü/eşzamanlı, varyant histoloji."},
+ {cat:"Tedavi sırası",q:"UTUC tedavi seçimi",a:"<ul><li><strong>Düşük risk:</strong> böbrek koruyucu — üreteroskopik ablasyon, segmenter rezeksiyon</li><li><strong>Yüksek risk:</strong> radikal nefroüreterektomi + mesane cuff'ı; uygunsa neoadjuvan sisplatin-bazlı KT</li></ul>RNU sonrası tek doz intravezikal KT mesane nüksünü azaltır.",flag:true},
+]},
+
+{block:"Onkoloji",topic:"Adrenal Kitleler",subs:["İnsidentaloma","Fonksiyon testi","Cerrahi endikasyon"],cards:[
+ {cat:"Endikasyon",q:"Adrenal insidentaloma cerrahi endikasyonları",a:"<ul><li>Fonksiyonel tümör (feokromositoma, Cushing, Conn — düzeltilmeli)</li><li>Boyut >4cm veya büyüme</li><li>Malignite şüphesi (HU >10 yıkanmayan, düzensiz)</li></ul>Feokromositomada <strong>preop alfa-bloker</strong> şart."},
+ {cat:"Tanı",q:"Adrenal kitle fonksiyon tarama testleri",a:"<ul><li>1mg deksametazon süpresyon (Cushing)</li><li>Plazma/idrar metanefrin (feokromositoma)</li><li>Aldosteron/renin oranı (hipertansiyonda — Conn)</li></ul>"},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"BPH / LUTS / TUR-P",subs:["Patofizyoloji","Değerlendirme","Medikal tedavi","Cerrahi","TUR komplikasyon"],cards:[
+ {cat:"Tanım/Kavram",q:"LUTS sınıflaması (depolama / boşaltma / işeme sonrası)",a:"<ul><li><strong>Depolama:</strong> sıklık, nokturi, urgensi, urge inkontinans</li><li><strong>Boşaltma (obstrüktif):</strong> zayıf akım, ikilenme, gecikme, ıkınma, kesik işeme</li><li><strong>İşeme sonrası:</strong> tam boşaltamama hissi, terminal damlama</li></ul>"},
+ {cat:"Endikasyon",q:"BPH hastasında temel değerlendirme",a:"Zorunlu: anamnez, <strong>IPSS</strong> + yaşam kalitesi skoru, fizik+rektal tuşe, idrar tahlili, PSA (uygun olguda), üroflowmetri + PMR (rezidüel idrar). Seçili: işeme günlüğü, üst sistem görüntüleme, ürodinami.<br><span class='warn'>⚠ Özkürkçügil hoca: önce anamnez+muayene, sonra tetkik.</span>"},
+ {cat:"İlaç & doz",q:"BPH medikal tedavi sınıfları ve etki",a:"<ul><li><strong>α-blokerler</strong> (tamsulosin, alfuzosin, silodosin, doksazosin): hızlı semptom ↓, prostat boyutunu değiştirmez</li><li><strong>5-ARI</strong> (finasterid, dutasterid): büyük prostatta (>40mL) hacim ↓, progresyon ↓; etki yavaş (3–6 ay)</li><li><strong>PDE5-i</strong> (tadalafil 5mg): LUTS + ED birlikteliğinde</li><li><strong>Antimuskarinik / β3 (mirabegron):</strong> baskın depolama semptomu</li><li><strong>Kombinasyon</strong> (α-bloker + 5-ARI): büyük prostat + progresyon riski</li></ul><span class='warn'>⚠ Mutlu/Dillioğlugil hoca: sınıf değil marka adı + doz ister.</span>"},
+ {cat:"Endikasyon",q:"BPH cerrahi (mutlak) endikasyonları",a:"<ul><li>Refrakter üriner retansiyon (kateter çıkamaması)</li><li>Tekrarlayan İYE</li><li>Tekrarlayan makroskopik hematüri (medikale dirençli)</li><li>Mesane taşı</li><li>Böbrek yetmezliği / üst sistem dilatasyonu (BPH'ye bağlı)</li><li>Medikal tedaviye yanıtsız / istemeyen</li></ul>"},
+ {cat:"Tedavi sırası",q:"Prostat boyutuna göre cerrahi seçimi",a:"<ul><li><strong><30mL:</strong> TUIP (mesane boynu insizyonu) veya TURP</li><li><strong>30–80mL:</strong> TURP (altın standart), bipolar/monopolar; HoLEP alternatif</li><li><strong>>80mL:</strong> HoLEP / açık prostatektomi / lazer enükleasyon</li></ul>Lazer (HoLEP, fotoselektif vaporizasyon) antikoagülanlı hastada avantajlı."},
+ {cat:"Tanım/Kavram",q:"TUR sendromu — mekanizma, bulgu, önlem",a:"<strong>Mekanizma:</strong> monopolar TURP'ta hipotonik irrigan (glisin) absorpsiyonu → dilüsyonel hiponatremi + hipervolemi.<br><strong>Bulgu:</strong> bulantı, konfüzyon, bradikardi, hipertansiyon, görme bozukluğu, nöbet.<br><strong>Önlem:</strong> rezeksiyon süresi <60dk, irrigan yüksekliği ↓, bipolar sistem (izotonik salin → TUR sendromu riski ~yok).<br><span class='warn'>⚠ Cerrahi istasyonda klasik soru.</span>"},
+ {cat:"Endikasyon",q:"Ürodinami endikasyonları (BPH/LUTS bağlamında)",a:"<ul><li>Cerrahi öncesi tanı belirsizse (nörojen mesane şüphesi, genç hasta)</li><li>Önceki cerrahi başarısızlığı</li><li>Nörolojik hastalık (MS, parkinson, omurilik)</li><li>Üroflow + semptom uyumsuzluğu, yüksek PMR</li><li>Kadın işeme disfonksiyonu / karışık inkontinans</li></ul>Basınç-akış çalışması obstrüksiyonu (detrusor zayıflığından) ayırır."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Ürodinami",subs:["Parametreler","Endikasyon","Yorumlama"],cards:[
+ {cat:"Tanım/Kavram",q:"Temel ürodinami parametreleri",a:"<ul><li><strong>Sistometri:</strong> kapasite, kompliyans, detrusor aşırı aktivitesi, ilk hissetme/dolgunluk</li><li><strong>Basınç-akış:</strong> Pdet@Qmax → obstrüksiyon (BOO) vs detrusor zayıflığı</li><li><strong>EMG:</strong> sfinkter-detrusor dissinerjisi</li><li><strong>VLPP / ALPP:</strong> stres inkontinansta kaçak nokta basıncı</li></ul>"},
+ {cat:"Tanım/Kavram",q:"İşeme fazı: BOO mu detrusor zayıflığı mı?",a:"Yüksek Pdet + düşük Qmax → <strong>obstrüksiyon</strong>. Düşük Pdet + düşük Qmax → <strong>detrusor underaktivitesi</strong>. Bladder Outlet Obstruction Index (BOOI = Pdet@Qmax − 2×Qmax): >40 obstrüktif, <20 obstrüksiyon yok."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Üriner İnkontinans",subs:["Tipler","Kadın UI","Erkek UI","Cerrahi"],cards:[
+ {cat:"Sınıflama",q:"Üriner inkontinans tipleri",a:"<ul><li><strong>Stres (SUI):</strong> öksürük/efor ile; sfinkter/destek yetersizliği</li><li><strong>Urge (UUI):</strong> ani sıkışma; detrusor aşırı aktivitesi (OAB)</li><li><strong>Mikst:</strong> ikisi birlikte</li><li><strong>Taşma:</strong> kronik retansiyon/yetersiz boşaltma</li><li><strong>Sürekli:</strong> fistül, ektopik üreter</li></ul>"},
+ {cat:"Tedavi sırası",q:"Kadın SUI tedavi basamakları",a:"<div class='step'><b>1</b> Yaşam tarzı + pelvik taban egzersizi (≥3 ay), kilo verme</div><div class='step'><b>2</b> Cerrahi: midüretral sling (TVT/TOT) — altın standart; alternatif kolposüspansiyon, bulking ajan</div>",flag:true},
+ {cat:"Tedavi sırası",q:"OAB / urge inkontinans tedavi basamakları",a:"<div class='step'><b>1</b> Davranışsal: mesane eğitimi, sıvı düzenleme, pelvik taban</div><div class='step'><b>2</b> Farmakolojik: antimuskarinik (solifenasin, vb.) veya β3 agonist (mirabegron)</div><div class='step'><b>3</b> Refrakter: intradetrusor botulinum toksin A, sakral nöromodülasyon, posterior tibial sinir stimülasyonu</div>"},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Nörojen Mesane",subs:["Sınıflama","Risk","Yönetim"],cards:[
+ {cat:"Tanım/Kavram",q:"Nörojen alt üriner sistem disfonksiyonu — temel risk",a:"En kritik hedef: <strong>üst üriner sistemi korumak</strong> (yüksek detrusor basıncı → reflü/hidronefroz/böbrek hasarı). Düşük basınçlı depolama + etkin boşaltma sağlanmalı. Yüksek riskli: detrusor sfinkter dissinerjisi (DSD), düşük kompliyans."},
+ {cat:"Tedavi sırası",q:"Nörojen mesane yönetim temel araçları",a:"<ul><li><strong>TAK</strong> (temiz aralıklı kateterizasyon): boşaltmanın altın standardı</li><li>Antimuskarinik / botulinum toksin: depolama basıncı ↓</li><li>Ürodinami ile periyodik takip</li><li>Augmentasyon sistoplasti (refrakter düşük kompliyans)</li></ul>"},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Ürolitiazis (Taş)",subs:["Taş tipleri","Akut kolik","Aktif tedavi","Metabolik"],cards:[
+ {cat:"Sınıflama",q:"Taş tipleri ve radyoopasite",a:"<ul><li><strong>Kalsiyum oksalat</strong> (en sık) — opak</li><li><strong>Kalsiyum fosfat</strong> — opak</li><li><strong>Strüvit</strong> (enfeksiyon/üreaz) — hafif opak, staghorn</li><li><strong>Ürik asit</strong> — <em>radyolüsen</em> (BT'de görünür, direkt grafide görünmez)</li><li><strong>Sistin</strong> — hafif opak, genetik</li></ul><span class='warn'>⚠ Cüneyt/Kerem hoca: opak olmayan (ürik asit) taş ve pH yönetimi sorar.</span>"},
+ {cat:"Endikasyon",q:"Akut renal kolik medikal expulsif tedavi & analjezi",a:"<strong>Analjezi:</strong> NSAİİ birinci tercih (kontrendike değilse), opioid alternatif.<br><strong>MET:</strong> ≤10mm distal üreter taşında α-bloker (tamsulosin) spontan düşüşü artırabilir.<br><strong>Acil girişim:</strong> obstrükte enfekte sistem (ürosepsis), tek böbrek, dirençli ağrı → acil drenaj (DJ stent / nefrostomi)."},
+ {cat:"Tedavi sırası",q:"Taş boyutu/lokalizasyona göre aktif tedavi",a:"<ul><li><strong>SWL (ESWL):</strong> <2cm böbrek / proksimal üreter; opak, uygun anatomi</li><li><strong>URS (üreteroskopi + lazer):</strong> üreter taşları, <2cm böbrek; geniş endikasyon</li><li><strong>PCNL:</strong> >2cm böbrek taşı, staghorn, alt pol kompleks</li></ul><span class='warn'>⚠ İlaçla eritme: ürik asit taşı → idrar alkalinizasyonu (potasyum sitrat, pH 6.5–7).</span>",flag:true},
+ {cat:"Endikasyon",q:"Metabolik değerlendirme — kime tam tetkik?",a:"Yüksek riskli taş hastası: rekürren, çocuk, soliter böbrek, strüvit/ürik asit/sistin taşı, ailevi, bağırsak hastalığı, gut. 24 saatlik idrar (Ca, oksalat, sitrat, ürik asit, hacim, pH) + taş analizi."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Üriner Sistem Enfeksiyonları",subs:["Sınıflama","Sistit/Piyelo","Prostatit","Antibiyotik"],cards:[
+ {cat:"Sınıflama",q:"EAU 2025 İYE sınıflaması (güncel değişiklik)",a:"EAU eski <em>basit/komplike</em> ayrımını revize etti → <strong>lokalize vs sistemik</strong> ve konak/risk faktörlerine dayalı (ORENUC). Sistemik tutulum (ateş, sepsis) ↔ alt sistem lokalize ayrımı ön planda.<br><span class='warn'>⚠ Bu güncel kavram değişikliğini vurgula — atlas/EAU 2026 teyit.</span>",flag:true},
+ {cat:"İlaç & doz",q:"Akut komplike olmayan sistit ampirik tedavi",a:"İlk tercihler: fosfomisin trometamol tek doz, nitrofurantoin 5 gün, pivmesilinam. Florokinolon ve geniş spektrum birinci basamakta önerilmez (kollateral hasar).<br><span class='warn'>⚠ Lokal direnç paterni belirleyici — atlas/EAU + yerel teyit.</span>",flag:true},
+ {cat:"Sınıflama",q:"Prostatit NIH sınıflaması",a:"<div class='step'><b>I</b> Akut bakteriyel prostatit</div><div class='step'><b>II</b> Kronik bakteriyel prostatit</div><div class='step'><b>III</b> Kronik pelvik ağrı sendromu (IIIa inflamatuar, IIIb noninflamatuar)</div><div class='step'><b>IV</b> Asemptomatik inflamatuar</div>"},
+ {cat:"Endikasyon",q:"Asemptomatik bakteriüri — kimde tedavi edilir?",a:"Sadece: <strong>gebelik</strong> ve <strong>ürolojik invaziv girişim öncesi</strong> (mukozal travma). Diğerlerinde (yaşlı, diyabetik, kateterli, nörojen mesane) tedavi <strong>edilmez</strong>."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Erektil Disfonksiyon & Cinsel Sağlık",subs:["ED","Peyronie","Priapizm","Ejakülasyon"],cards:[
+ {cat:"Tedavi sırası",q:"ED tedavi basamakları",a:"<div class='step'><b>1</b> Yaşam tarzı + risk faktörü düzeltme; <strong>PDE5-i</strong> (sildenafil, tadalafil, vardenafil, avanafil)</div><div class='step'><b>2</b> İntrakavernozal enjeksiyon (alprostadil), intraüretral, vakum cihazı</div><div class='step'><b>3</b> Penil protez (refrakter)</div><span class='warn'>⚠ PDE5-i mutlak kontrendikasyon: nitrat kullanımı. Melih hoca ED birinci basamağı sorar.</span>"},
+ {cat:"Tedavi sırası",q:"Peyronie hastalığı tedavi yaklaşımı",a:"<div class='step'><b>Akut (ağrılı, stabil değil)</b> izlem, oral/intralezyonel (kollajenaz CCH), traksiyon</div><div class='step'><b>Stabil + fonksiyonel bozukluk</b> cerrahi: plikasyon (Nesbit) veya plak insizyon/eksizyon + greft; ağır + ED → protez</div><span class='warn'>⚠ Melih hoca üçüncü basamak (cerrahi/protez seçimi) sorabilir.</span>"},
+ {cat:"Endikasyon",q:"İskemik priapizm — acil yönetim sırası",a:"<div class='step'><b>1</b> Aspirasyon ± irrigasyon (korpus kavernozum)</div><div class='step'><b>2</b> İntrakavernozal sempatomimetik (fenilefrin)</div><div class='step'><b>3</b> Cerrahi şant (distal → proksimal)</div>İskemik = düşük akımlı = <strong>acil</strong> (kompartman, kan gazı asidotik). Non-iskemik (yüksek akımlı, travma) acil değil."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Erkek İnfertilitesi",subs:["Değerlendirme","Azospermi","Varikosel","Tedavi"],cards:[
+ {cat:"Tanım/Kavram",q:"Semen analizi temel referans (WHO) ve azospermi ayrımı",a:"Anormallikte iki ayrı semen analizi gerekir. <strong>Obstrüktif azospermi:</strong> normal testis volümü + normal FSH + normal testosteron. <strong>Non-obstrüktif:</strong> küçük testis + yüksek FSH (testiküler yetmezlik)."},
+ {cat:"Endikasyon",q:"Varikosel düzeltme endikasyonu",a:"Klinik (palpe edilen) varikosel + anormal semen parametreleri + infertilite + partnerde tedavi edilebilir/normal fertilite. Subklinik varikosel düzeltilmez. Adölesanda testis büyüme geriliği endikasyon olabilir.",flag:true},
+ {cat:"Tanım/Kavram",q:"Azospermide genetik tarama",a:"Non-obstrüktif azospermi / ağır oligospermi: karyotip + <strong>Y kromozomu mikrodelesyon</strong> (AZFa/b/c). Konjenital bilateral vas deferens yokluğu (CBAVD): <strong>CFTR</strong> mutasyon (kistik fibroz)."},
+]},
+
+{block:"Fonksiyonel & Benign",topic:"Üriner Sistem Travması",subs:["Böbrek","Mesane","Üretra","Yönetim"],cards:[
+ {cat:"Sınıflama",q:"Renal travma yönetim prensibi (AAST)",a:"Çoğu künt renal travma (düşük derece) <strong>konservatif</strong> izlenir. Cerrahi/anjiyoembolizasyon: hemodinamik instabilite, genişleyen/pulsatil hematom, yüksek derece (IV–V) komplike. Hematüri derecesi ile yaralanma şiddeti her zaman korele değildir."},
+ {cat:"Sınıflama",q:"Mesane rüptürü: intraperitoneal vs ekstraperitoneal",a:"<ul><li><strong>İntraperitoneal:</strong> genelde cerrahi onarım (idrar batına kaçar)</li><li><strong>Ekstraperitoneal:</strong> çoğunlukla kateter drenajı ile konservatif (eşlik eden endikasyon yoksa)</li></ul>Tanı: BT/konvansiyonel sistografi (mesane dolu çekim)."},
+ {cat:"Tedavi sırası",q:"Üretra yaralanması yönetimi",a:"<strong>Anterior:</strong> künt (binicilik) → akut dönemde suprapubik sistostomi/üretral kateter; <span class='warn'>⚠ acil üretroplasti artık önerilmiyor</span>.<br><strong>Posterior (pelvis kırığı):</strong> suprapubik divertme + gecikmiş üretroplasti; seçili olguda erken endoskopik realignment.",flag:true},
+]},
+
+{block:"Pediatrik",topic:"VUR & Pediatrik İYE",subs:["Dereceleme","Tanı","Tedavi"],cards:[
+ {cat:"Sınıflama",q:"VUR dereceleri (I–V, uluslararası)",a:"<div class='step'><b>I</b> Yalnız üretere reflü</div><div class='step'><b>II</b> Üreter+pelvis+kalisler, dilatasyon yok</div><div class='step'><b>III</b> Hafif dilatasyon, forniks künt</div><div class='step'><b>IV</b> Orta dilatasyon, kıvrım korunmuş</div><div class='step'><b>V</b> Ciddi dilatasyon+kıvrılma, papilla görünümü kaybı</div>VCUG ile tanı + derecelendirme."},
+ {cat:"Tedavi sırası",q:"VUR tedavi yaklaşımı (genel prensip)",a:"Düşük derece + skar yok → izlem ± antibiyotik profilaksisi (özellikle infant, tekrarlayan ateşli İYE). Yüksek derece / kırılma İYE / progresif skar → cerrahi (üreteral reimplantasyon) veya endoskopik enjeksiyon.<span class='warn'>⚠ Yaş, cinsiyet, skar, İYE tipi karar değiştirir — atlas teyit.</span>",flag:true},
+]},
+
+{block:"Pediatrik",topic:"UPJ Darlığı & Hidronefroz",subs:["Antenatal HN","Tanı","Cerrahi"],cards:[
+ {cat:"Tanım/Kavram",q:"Antenatal hidronefroz değerlendirme (SFU / APD)",a:"Doğum sonrası USG (ilk 48 saatte oligüriden kaçın, sonra tekrar). SFU derecelendirme veya ön-arka pelvis çapı (APD). VCUG (reflü dışlama), gerekirse diüretikli renogram (MAG3) — fonksiyon + obstrüksiyon."},
+ {cat:"Endikasyon",q:"UPJ darlığında piyeloplasti endikasyonu",a:"<ul><li>Semptomatik (ağrı, İYE, taş)</li><li>Böbrek fonksiyonunda azalma (<%40 diferansiyel) veya seri takipte ↓</li><li>Artan hidronefroz / obstrüktif drenaj paterni</li></ul>Anderson-Hynes dismembered piyeloplasti altın standart.<span class='warn'>⚠ Cüneyt/Kerem hoca UPJ cerrahisini sorar.</span>"},
+]},
+
+{block:"Pediatrik",topic:"İnmemiş Testis & Hipospadias",subs:["Kriptorşidizm","Hipospadias tipleri","Zamanlama"],cards:[
+ {cat:"Tedavi sırası",q:"İnmemiş testis (kriptorşidizm) yönetimi & zamanlama",a:"Palpabl + inmemiş → <strong>orşiopeksi 6–18 ay arası</strong> (en geç 18 ay; erken cerrahi fertilite + malignite riskini azaltır). Non-palpabl → laparoskopik tanı + tedavi. Hormonal tedavi rutin önerilmez."},
+ {cat:"Sınıflama",q:"Hipospadias tipleri (meatus lokalizasyonu)",a:"<ul><li><strong>Distal/anterior</strong> (en sık): glanüler, koronal, subkoronal</li><li><strong>Orta:</strong> penil şaft</li><li><strong>Proksimal/posterior:</strong> penoskrotal, skrotal, perineal</li></ul>Triad: ektopik meatus, ventral kordi, dorsal hood (kep) prepusyum.<span class='warn'>⚠ Kerem hoca görsel/vaka ile hipospadias tipi sorar — sünnet YAPILMAZ (greft dokusu).</span>"},
+]},
+
+{block:"Pediatrik",topic:"Pediatrik Diğer",subs:["PUV","Ekstrofi","Enürezis"],cards:[
+ {cat:"Tanım/Kavram",q:"Posterior üretral valv (PUV) — temel yaklaşım",a:"Erkek bebekte en sık alt sistem obstrüksiyonu. Antenatal bilateral HN + kalın mesane + 'keyhole' işareti. Doğumda kateter drenajı + stabilizasyon → <strong>endoskopik valv ablasyonu</strong>. Uzun dönem: böbrek fonksiyon takibi (valve bladder)."},
+ {cat:"Tedavi sırası",q:"Monosemptomatik enürezis nokturna tedavi",a:"<div class='step'><b>1</b> Davranışsal + alarm tedavisi (kalıcı en etkili)</div><div class='step'><b>2</b> Desmopressin (gece poliürisi olanda)</div>Önce kabızlık/gündüz semptom/OAB dışlanır (nonmonosemptomatik ise farklı yönetim)."},
+]},
+];
+
+/* ============ STATE ============ */
+let state={topic:0,mode:"read",filter:"all",conf:{},revealed:{}};
+try{const s=localStorage.getItem("uro_ezber");if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}
+function save(){try{localStorage.setItem("uro_ezber",JSON.stringify({conf:state.conf}));}catch(e){}}
+
+function cardKey(t,i){return t+"_"+i;}
+
+/* ============ NAV ============ */
+function buildNav(){
+  const nav=document.getElementById("nav");
+  let html="";let lastBlock="";
+  DATA.forEach((t,i)=>{
+    if(t.block!==lastBlock){html+=`<div class="block-title">${t.block}</div>`;lastBlock=t.block;}
+    const lvl=topicLevel(i);
+    const pct=topicPct(i);
+    html+=`<div class="topic-item ${i===state.topic?'active':''} lvl-${lvl}" data-i="${i}">
+      <span class="dot"></span><span class="name">${t.topic}</span>
+      <span class="pct">${pct}%</span></div>`;
+  });
+  nav.innerHTML=html;
+  nav.querySelectorAll(".topic-item").forEach(el=>{
+    el.addEventListener("click",()=>{state.topic=+el.dataset.i;closeSidebar();render();});
+  });
+}
+function topicPct(i){
+  const t=DATA[i];const n=t.cards.length;if(!n)return 0;
+  let sum=0;t.cards.forEach((c,j)=>{const v=state.conf[cardKey(i,j)]||0;sum+=v;});
+  return Math.round((sum/(n*3))*100);
+}
+function topicLevel(i){ // dot rengi: en zayıf seviye
+  const t=DATA[i];let min=3,any=false;
+  t.cards.forEach((c,j)=>{const v=state.conf[cardKey(i,j)];if(v){any=true;if(v<min)min=v;}});
+  if(!any)return 0;return min;
+}
+
+/* ============ RENDER ============ */
+function render(){
+  const t=DATA[state.topic];
+  document.getElementById("tbEyebrow").textContent=t.block;
+  document.getElementById("tbTitle").textContent=t.topic;
+  document.getElementById("mRead").classList.toggle("on",state.mode==="read");
+  document.getElementById("mBlank").classList.toggle("on",state.mode==="blank");
+
+  const cards=t.cards.map((c,j)=>({...c,j}));
+  const counts={all:cards.length,weak:0,unseen:0};
+  cards.forEach(c=>{const v=state.conf[cardKey(state.topic,c.j)]||0;if(v===0)counts.unseen++;if(v===1||v===2)counts.weak++;});
+
+  let filtered=cards;
+  if(state.filter==="weak")filtered=cards.filter(c=>{const v=state.conf[cardKey(state.topic,c.j)]||0;return v===1||v===2;});
+  if(state.filter==="unseen")filtered=cards.filter(c=>!(state.conf[cardKey(state.topic,c.j)]));
+
+  let html="";
+  // subtopic chips
+  html+=`<div class="subtopics">`+t.subs.map(s=>`<span class="chip">${s}</span>`).join("")+`</div>`;
+
+  // mode note
+  if(state.mode==="blank"){
+    html+=`<div class="blank-note"><b>Boş kağıt modu.</b> Her başlığı oku, cevabı <b>açmadan</b> kağıda evrelemeyi/sıralamayı/listeyi kendin yaz. Sonra karta dokunup denetle ve güven işaretle. Sözlü provası için aynı şeyi <b>sesli</b> anlat.</div>`;
+  }
+
+  // filter bar
+  html+=`<div class="filterbar">
+    <button class="filt ${state.filter==='all'?'on':''}" data-f="all">Tümü<span class="n">${counts.all}</span></button>
+    <button class="filt ${state.filter==='weak'?'on':''}" data-f="weak">Zayıf<span class="n">${counts.weak}</span></button>
+    <button class="filt ${state.filter==='unseen'?'on':''}" data-f="unseen">Görülmemiş<span class="n">${counts.unseen}</span></button>
+  </div>`;
+
+  if(filtered.length===0){
+    html+=`<div class="empty"><div class="big">Bu filtrede kart yok.</div>Tümü'ne dön ya da başka konu seç.</div>`;
+  }else{
+    // group by cat
+    const cats=[];filtered.forEach(c=>{if(!cats.includes(c.cat))cats.push(c.cat);});
+    cats.forEach(cat=>{
+      html+=`<div class="catgroup"><div class="cat-h">${cat}</div>`;
+      filtered.filter(c=>c.cat===cat).forEach(c=>{
+        const key=cardKey(state.topic,c.j);
+        const rev=state.mode==="read"?true:false; // okuma modunda cevap açık değil, dokununca açılır; ama boş kağıtta da dokununca
+        const isRev=state.revealed[key]||false;
+        const conf=state.conf[key]||0;
+        html+=`<div class="card ${isRev?'revealed':''}" data-key="${key}">
+          <div class="q" data-toggle="${key}">
+            <span class="qnum">${String(c.j+1).padStart(2,'0')}</span>
+            <span class="qtext">${c.q}</span>
+            ${c.flag?`<span class="flag">⚠ TEYİT</span>`:``}
+            <span class="chev">▶</span>
+          </div>
+          <div class="answer">
+            <div class="a-body">${c.a}</div>
+            <div class="conf">
+              <button data-c="1" data-key="${key}" class="${conf===1?'sel':''}">🔴 Bilmiyorum</button>
+              <button data-c="2" data-key="${key}" class="${conf===2?'sel':''}">🟡 Kısmen</button>
+              <button data-c="3" data-key="${key}" class="${conf===3?'sel':''}">🟢 Sağlam</button>
+            </div>
+          </div>
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+  }
+
+  document.getElementById("content").innerHTML=html;
+  bindCards();
+  buildNav();
+  updateGlobal();
+}
+
+function bindCards(){
+  document.querySelectorAll("[data-toggle]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const k=el.dataset.toggle;
+      state.revealed[k]=!state.revealed[k];
+      el.closest(".card").classList.toggle("revealed",state.revealed[k]);
+    });
+  });
+  document.querySelectorAll(".conf button").forEach(el=>{
+    el.addEventListener("click",e=>{
+      e.stopPropagation();
+      const k=el.dataset.key;const c=+el.dataset.c;
+      state.conf[k]=(state.conf[k]===c)?0:c;
+      save();render();
+    });
+  });
+  document.querySelectorAll(".filt").forEach(el=>{
+    el.addEventListener("click",()=>{state.filter=el.dataset.f;render();});
+  });
+}
+
+function updateGlobal(){
+  let total=0,sum=0;
+  DATA.forEach((t,i)=>{t.cards.forEach((c,j)=>{total++;sum+=(state.conf[cardKey(i,j)]||0);});});
+  const pct=total?Math.round((sum/(total*3))*100):0;
+  let solid=0;DATA.forEach((t,i)=>t.cards.forEach((c,j)=>{if(state.conf[cardKey(i,j)]===3)solid++;}));
+  document.getElementById("globalBar").style.width=pct+"%";
+  document.getElementById("globalPct").textContent=pct+"%";
+  document.getElementById("globalLbl").textContent=solid+" / "+total+" kart sağlam";
+}
+
+/* ============ MODE & SIDEBAR ============ */
+document.getElementById("mRead").addEventListener("click",()=>{state.mode="read";render();});
+document.getElementById("mBlank").addEventListener("click",()=>{
+  state.mode="blank";
+  // boş kağıt moduna geçince açık cevapları kapat
+  state.revealed={};
+  render();
+});
+const sidebar=document.getElementById("sidebar"),scrim=document.getElementById("scrim");
+function openSidebar(){sidebar.classList.add("open");scrim.classList.add("open");}
+function closeSidebar(){sidebar.classList.remove("open");scrim.classList.remove("open");}
+document.getElementById("menuBtn").addEventListener("click",openSidebar);
+scrim.addEventListener("click",closeSidebar);
+
+render();
+</script>
+</body>
+</html>

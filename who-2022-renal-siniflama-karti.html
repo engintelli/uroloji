@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHO 2022 — Renal Tümör Sınıflaması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13110f;--ink2:#1a1714;--surface:#221e1a;--surface2:#2a2521;--line:#3a332c;
+    --cream:#f2ede3;--muted:#a79e90;--muted2:#7d7568;
+    --malign:#e2674a;--benign:#54b8a8;--lmp:#d9a441;--mol:#b98ad6;
+    --malign-soft:#3a201a;--benign-soft:#16302c;--lmp-soft:#33270f;--mol-soft:#291f33;
+    --shadow:0 18px 40px -22px rgba(0,0,0,.75);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(900px 500px at 88% -8%,#241a16 0,transparent 52%),radial-gradient(700px 600px at -8% 100%,#15211f 0,transparent 50%),var(--ink);
+    color:var(--cream);font-family:'Spline Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;padding:0 16px 60px;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+
+  header{padding:30px 0 8px}
+  .kicker{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--malign);font-weight:600;margin-bottom:8px}
+  h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(1.9rem,5.5vw,3rem);line-height:1.02;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--benign);font-weight:500}
+  .sub{color:var(--muted);font-size:.92rem;margin-top:10px;max-width:62ch}
+
+  /* legend + filters */
+  .toolbar{position:sticky;top:0;z-index:30;background:rgba(19,17,15,.9);backdrop-filter:blur(12px);
+    margin:18px -16px 0;padding:14px 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .toolbar .inner{max-width:1000px;margin:0 auto}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.74rem;color:var(--muted);margin-bottom:11px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .d-malign{background:var(--malign)} .d-benign{background:var(--benign)} .d-lmp{background:var(--lmp)} .d-mol{background:var(--mol)}
+  .filters{display:flex;flex-wrap:wrap;gap:7px}
+  .filt{font-size:.76rem;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+    padding:6px 13px;border-radius:999px;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .filt:hover{color:var(--cream)}
+  .filt.active{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+
+  /* grid of category cards */
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:22px}
+  @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}.span2{grid-column:1/-1}}
+
+  .cat{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);
+    display:flex;flex-direction:column}
+  .cat-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px 14px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--ink2),transparent)}
+  .cat-no{font-family:'Fraunces',serif;font-weight:800;font-size:1.5rem;color:var(--malign);line-height:1;flex:0 0 auto;
+    font-variant-numeric:tabular-nums;min-width:1.4em}
+  .cat-title{font-family:'Fraunces',serif;font-weight:600;font-size:1.12rem;line-height:1.18}
+  .cat-en{display:block;font-family:'Spline Sans';font-size:.72rem;color:var(--muted2);font-weight:500;letter-spacing:.02em;margin-top:3px}
+  .cat-body{padding:8px 18px 16px}
+
+  .ent{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);transition:opacity .2s}
+  .ent:last-child{border-bottom:none}
+  .ent .dot{margin-top:7px}
+  .ent .txt{flex:1}
+  .ent .name{font-weight:600;font-size:.95rem;color:var(--cream)}
+  .ent .hook{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+  .ent .hook b{color:var(--benign);font-weight:600}
+  .ent.dim{opacity:.16}
+  .new{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.06em;color:var(--lmp);
+    background:var(--lmp-soft);border:1px solid #4a3a18;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  .banner{border-left:3px solid var(--mol);background:var(--mol-soft);padding:12px 16px;border-radius:0 12px 12px 0;
+    margin:0 0 2px;font-size:.86rem;color:#e9e1d6}
+  .banner b{color:#fff}
+  .banner .h{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--mol);margin-bottom:5px;display:block}
+
+  .changes{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:22px}
+  .changes h2{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:4px}
+  .changes ul{list-style:none;margin-top:10px}
+  .changes li{position:relative;padding-left:20px;margin:9px 0;font-size:.9rem;color:#e7e0d4}
+  .changes li::before{content:"";position:absolute;left:2px;top:10px;width:7px;height:2px;background:var(--lmp)}
+  .changes li b{color:#fff}
+
+  footer{margin-top:28px;color:var(--muted2);font-size:.78rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">WHO 5. baskı · 2022 · Renal Tümörler</div>
+    <h1>Renal Tümör <em>Sınıflaması</em></h1>
+    <p class="sub">Tüm taksonomi tek bakışta. 11 ana grup, alt antiteler renk-kodlu. Filtreyle malign / benign / moleküler / 2022'de yeni-değişen başlıkları izole et.</p>
+  </header>
+
+  <div class="toolbar">
+    <div class="inner">
+      <div class="legend">
+        <span><i class="dot d-malign"></i> Malign</span>
+        <span><i class="dot d-benign"></i> Benign</span>
+        <span><i class="dot d-lmp"></i> Düşük malign potansiyel / indolan</span>
+        <span><i class="dot d-mol"></i> Moleküler tanımlı</span>
+        <span><i class="new" style="margin:0">YENİ</i> 2022'de yeni/değişen</span>
+      </div>
+      <div class="filters" id="filters">
+        <button class="filt active" data-f="all">Tümü</button>
+        <button class="filt" data-f="malign">Malign</button>
+        <button class="filt" data-f="benign">Benign</button>
+        <button class="filt" data-f="mol">Moleküler</button>
+        <button class="filt" data-f="new">🆕 Yeni / Değişen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">1</span><span class="cat-title">Berrak hücreli renal tümörler<span class="cat-en">Clear cell renal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Berrak hücreli RCC (ccRCC)</span><span class="hook"><b>VHL</b> / 3p delesyonu · en sık (%70-85)</span></div></div>
+        <div class="ent" data-t="lmp"><i class="dot d-lmp"></i><div class="txt"><span class="name">Multiloküler kistik düşük malign potansiyelli renal neoplazi</span></div></div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">2</span><span class="cat-title">Papiller renal tümörler<span class="cat-en">Papillary renal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Renal papiller adenom</span></div></div>
+        <div class="ent" data-t="malign new"><i class="dot d-malign"></i><div class="txt"><span class="name">Papiller RCC<span class="new">DEĞİŞTİ</span></span><span class="hook">tip 1/2 ayrımı <b>kaldırıldı</b> · <i>MET</i> (herediter tip 1)</span></div></div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">3</span><span class="cat-title">Onkositik & kromofob renal tümörler<span class="cat-en">Oncocytic and chromophobe renal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Renal onkositom</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Kromofob RCC</span><span class="hook">en iyi prognoz · <b>Birt-Hogg-Dubé</b> · ISUP grade uygulanmaz</span></div></div>
+        <div class="ent" data-t="lmp new"><i class="dot d-lmp"></i><div class="txt"><span class="name">Diğer onkositik tümörler: LOT, EVT<span class="new">YENİ</span></span><span class="hook">low-grade oncocytic / eosinophilic vacuolated tumour</span></div></div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">4</span><span class="cat-title">Toplayıcı kanal tümörleri<span class="cat-en">Collecting duct tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Toplayıcı kanal (Bellini) karsinomu</span><span class="hook">agresif · medüller yerleşim</span></div></div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="cat span2">
+      <div class="cat-head"><span class="cat-no">5</span><span class="cat-title">Diğer renal tümörler<span class="cat-en">Other renal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign new"><i class="dot d-benign"></i><div class="txt"><span class="name">Berrak hücreli papiller renal hücreli tümör<span class="new">DEĞİŞTİ</span></span><span class="hook">"karsinom" → <b>tümör</b> · indolan, malign değil</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Müsinöz tübüler ve iğsi hücreli karsinom</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Tübülokistik RCC</span><span class="hook">düşük dereceli</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Edinilmiş kistik hastalık ilişkili RCC</span><span class="hook">uzun diyaliz / ESRD</span></div></div>
+        <div class="ent" data-t="malign new"><i class="dot d-malign"></i><div class="txt"><span class="name">Eozinofilik solid ve kistik RCC (ESC-RCC)<span class="new">YENİ</span></span><span class="hook"><b>TSC</b> ilişkili · kadında</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Renal hücreli karsinom, NOS</span></div></div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="cat span2">
+      <div class="cat-head"><span class="cat-no" style="color:var(--mol)">6</span><span class="cat-title">Moleküler tanımlı renal karsinomlar<span class="cat-en">Molecularly defined renal carcinomas</span></span></div>
+      <div class="cat-body">
+        <div class="banner"><span class="h">2022'nin en büyük yeniliği</span>Bu grupta tanıyı <b>morfoloji değil, tanımlayıcı genetik değişiklik</b> koyar. Çoğu genç hastada; bir kısmı agresif.</div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">TFE3-rearranged RCC</span><span class="hook">Xp11 translokasyonu · MiT ailesi · genç</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">TFEB-altered RCC</span><span class="hook">rearranged t(6;11) + amplified</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">ELOC (TCEB1)-mutated RCC</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">FH-deficient RCC</span><span class="hook"><b>HLRCC</b> · eski agresif "papiller tip 2" · erken metastaz</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">SDH-deficient RCC</span><span class="hook">paraganglioma / GIST ilişkisi</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">ALK-rearranged RCC</span></div></div>
+        <div class="ent" data-t="mol new"><i class="dot d-mol"></i><div class="txt"><span class="name">SMARCB1-deficient renal medüller karsinom</span><span class="hook"><b>orak hücre trait</b> · genç · çok agresif</span></div></div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">7</span><span class="cat-title">Metanefrik tümörler<span class="cat-en">Metanephric tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Metanefrik adenom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Metanefrik adenofibrom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Metanefrik stromal tümör</span></div></div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">8</span><span class="cat-title">Mikst epitelyal & stromal renal tümörler<span class="cat-en">Mixed epithelial and stromal renal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Kistik nefrom (erişkin)</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Mikst epitelyal ve stromal tümör (MEST)</span></div></div>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="cat span2">
+      <div class="cat-head"><span class="cat-no">9</span><span class="cat-title">Mezenkimal tümörler<span class="cat-en">Mesenchymal tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Anjiyomyolipom (AML / PEComa)</span><span class="hook">damar+düz kas+yağ · <b>TSC</b> (multipl)</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Epiteloid anjiyomyolipom</span><span class="hook">malign potansiyel · metastaz yapabilir</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Renal hemanjioblastom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Jukstaglomerüler hücreli tümör</span><span class="hook"><b>renin</b> → HT + hipokalemi</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Renomedüller interstisyel hücreli tümör</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Çocukluk: berrak hücreli sarkom · rabdoid tümör · konjenital mezoblastik nefrom · infantil ossifiye renal tümör</span></div></div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">10</span><span class="cat-title">Embriyonal neoplazmlar<span class="cat-en">Embryonal neoplasms (pediatric)</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Nefroblastom (Wilms tümörü)</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Kistik kısmen diferansiye nefroblastom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Pediatrik kistik nefrom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Nefrojenik artıklar / nefroblastomatozis</span></div></div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="cat">
+      <div class="cat-head"><span class="cat-no">11</span><span class="cat-title">Nöroendokrin tümörler<span class="cat-en">Neuroendocrine tumours</span></span></div>
+      <div class="cat-body">
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">İyi diferansiye nöroendokrin tümör</span></div></div>
+        <div class="ent" data-t="malign"><i class="dot d-malign"></i><div class="txt"><span class="name">Büyük / küçük hücreli nöroendokrin karsinom</span></div></div>
+        <div class="ent" data-t="benign"><i class="dot d-benign"></i><div class="txt"><span class="name">Paraganglioma</span></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="changes">
+    <h2>2022'de neler değişti? <span style="font-size:.8rem;color:var(--muted2);font-family:'Spline Sans'">(jüri buradan sorar)</span></h2>
+    <ul>
+      <li><b>Moleküler tanımlı renal karsinomlar</b> yeni şemsiye kategori oldu — tanıyı gen koyar (TFE3, TFEB, ELOC, FH, SDH, ALK, SMARCB1).</li>
+      <li><b>Papiller RCC tip 1/2 ayrımı kaldırıldı</b> — eski agresif "tip 2"nin bir kısmı FH-deficient ve TFE3 antitelere ayrıştı.</li>
+      <li><b>Clear cell papillary RCC → "tümör"</b> — "karsinom" düştü; indolan/benign kabul edildi.</li>
+      <li><b>ESC-RCC</b> (eozinofilik solid-kistik) yeni antite olarak girdi — TSC ilişkili.</li>
+      <li><b>LOT ve EVT</b> onkositik tümörlerde gelişen antiteler olarak tanımlandı.</li>
+      <li><b>Derecelendirme:</b> WHO/ISUP grade Fuhrman'ın yerine (ccRCC + pRCC; kromofobda uygulanmaz) — bu 2016'dan beri ama hâlâ sınanır.</li>
+    </ul>
+  </div>
+
+  <footer>Kaynak: WHO Classification of Tumours, 5. baskı — Urinary and Male Genital Tumours (2022). Çalışma amaçlı; tanı için tam metne başvur.</footer>
+</div>
+
+<script>
+  const filters=document.querySelectorAll('.filt');
+  const ents=document.querySelectorAll('.ent');
+  filters.forEach(f=>f.addEventListener('click',()=>{
+    filters.forEach(x=>x.classList.remove('active'));
+    f.classList.add('active');
+    const mode=f.dataset.f;
+    ents.forEach(e=>{
+      const t=e.dataset.t||'';
+      const match = mode==='all' || t.split(' ').includes(mode);
+      e.classList.toggle('dim',!match);
+    });
+  }));
+</script>
+</body>
+</html>

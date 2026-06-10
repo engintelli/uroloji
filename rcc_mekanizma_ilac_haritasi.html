@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RCC Mekanizması & İlaç Etki Noktaları</title>
+<style>
+  :root{
+    --bg:#0b0e13; --bg2:#11151c; --panel:#161b22; --panel2:#1c232c;
+    --border:#2a3138; --border2:#39424d;
+    --tx:#e6edf3; --mut:#8b949e; --mut2:#6e7681;
+    --glow:#fbbf24;
+    --zoneA:#a78bfa; --zoneB:#fb923c; --zoneC:#22d3ee;
+    --c-hif:#a78bfa; --c-tki:#fb923c; --c-multi:#facc15; --c-bev:#f472b6;
+    --c-mtor:#34d399; --c-pd1:#22d3ee; --c-pdl1:#2dd4bf; --c-ctla:#60a5fa;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:var(--bg);color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    line-height:1.5;padding:0 0 92px;}
+  header{padding:18px 16px 12px;border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#11151c,#0b0e13);position:sticky;top:0;z-index:50;}
+  h1{font-size:18px;margin:0 0 3px;font-weight:700;letter-spacing:.2px;}
+  .sub{font-size:12.5px;color:var(--mut);margin:0;}
+  .wrap{max-width:540px;margin:0 auto;}
+  .section-label{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;
+    color:var(--mut2);margin:16px 16px 8px;font-weight:700;}
+
+  .zone{margin:8px 14px;border-radius:16px;padding:12px 13px 14px;
+    border:1.5px solid var(--border);background:var(--bg2);position:relative;}
+  .zone .ztag{position:absolute;top:-9px;left:14px;font-size:10px;font-weight:700;
+    padding:2px 9px;border-radius:20px;letter-spacing:.4px;}
+  .zone.A{border-color:#3a2f5e;} .zone.A .ztag{background:var(--zoneA);color:#170d2e;}
+  .zone.B{border-color:#5e3f24;} .zone.B .ztag{background:var(--zoneB);color:#2b1606;}
+  .zone.C{border-color:#15454d;} .zone.C .ztag{background:var(--zoneC);color:#062227;}
+  .ztitle{font-size:12px;color:var(--mut);margin:4px 0 9px;}
+
+  .node{background:var(--panel);border:1.5px solid var(--border);border-radius:12px;
+    padding:9px 11px;position:relative;transition:.28s ease;margin:6px 0;}
+  .node .ntitle{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+  .node .ndesc{font-size:11px;color:var(--mut);margin-top:2px;}
+  .node .badge{position:absolute;top:-9px;right:9px;font-size:9px;font-weight:700;
+    background:var(--glow);color:#1a1206;padding:2px 7px;border-radius:20px;opacity:0;
+    transform:translateY(4px);transition:.25s;letter-spacing:.3px;}
+  .node.glow{border-color:var(--glow);box-shadow:0 0 0 1px var(--glow),0 0 20px -4px var(--glow);
+    background:var(--panel2);}
+  .node.glow .badge{opacity:1;transform:translateY(0);}
+  .node.dim{opacity:.38;}
+  .ico{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-size:12px;background:var(--bg2);border:1px solid var(--border);flex:0 0 auto;}
+
+  .arrow{display:flex;flex-direction:column;align-items:center;padding:1px 0;}
+  .arrow .line{width:2px;height:12px;background:var(--border2);transition:.28s;}
+  .arrow .lbl{font-size:9.5px;color:var(--mut);background:var(--bg2);padding:1px 7px;
+    border:1px solid var(--border);border-radius:20px;position:relative;z-index:2;transition:.28s;}
+  .arrow.glow .line{background:var(--glow);box-shadow:0 0 8px var(--glow);}
+  .arrow.glow .lbl{color:#1a1206;background:var(--glow);border-color:var(--glow);font-weight:700;}
+
+  .twocol{display:flex;gap:8px;} .twocol .node{flex:1;}
+  .zlink{font-size:9.5px;color:var(--mut2);text-align:center;margin:2px 0;}
+
+  /* drugs */
+  .drugs{padding:2px 12px;}
+  .drug{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:var(--panel);border:1.5px solid var(--border);border-radius:12px;
+    padding:11px 12px;margin:7px 0;color:var(--tx);font-size:13px;font-weight:600;
+    cursor:pointer;transition:.18s;}
+  .drug:active{transform:scale(.985);}
+  .drug .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;}
+  .drug .dsub{display:block;font-size:10px;color:var(--mut);font-weight:500;margin-top:1px;}
+  .drug .arrowi{margin-left:auto;color:var(--mut2);font-size:15px;transition:.2s;}
+  .drug.active{border-color:var(--accent);background:var(--panel2);box-shadow:0 0 0 1px var(--accent);}
+  .drug.active .arrowi{transform:rotate(90deg);color:var(--accent);}
+
+  #detail{margin:0 16px 8px;border-radius:14px;border:0 solid var(--border);
+    background:linear-gradient(180deg,var(--panel2),var(--panel));padding:0;overflow:hidden;
+    max-height:0;opacity:0;transition:.35s;}
+  #detail.show{max-height:1500px;opacity:1;border-width:1.5px;padding:14px 15px;margin-bottom:16px;}
+  #detail h3{margin:0 0 2px;font-size:16px;}
+  #detail .dclass{font-size:11px;color:var(--mut);margin:0 0 10px;}
+  #detail .row{margin:9px 0;}
+  #detail .k{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;font-weight:700;margin-bottom:2px;}
+  #detail .v{font-size:13px;}
+  #detail .v b{color:#fff;}
+  #detail .jury{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--glow);
+    border-radius:8px;padding:9px 11px;margin-top:11px;font-size:12.5px;}
+  #detail .jury .jl{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--glow);
+    font-weight:700;margin-bottom:3px;}
+
+  .resetbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,transparent,#0b0e13 30%);
+    padding:14px 16px 18px;z-index:60;}
+  .resetbar .inner{max-width:540px;margin:0 auto;display:flex;gap:9px;}
+  .reset{flex:1;background:var(--panel);border:1.5px solid var(--border);color:var(--mut);
+    border-radius:11px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;}
+  .hint{flex:2;font-size:11px;color:var(--mut2);display:flex;align-items:center;justify-content:center;
+    text-align:center;border:1px dashed var(--border);border-radius:11px;padding:6px 10px;}
+  .legend{font-size:10px;color:var(--mut2);padding:2px 16px 0;text-align:center;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>🧫 RCC Mekanizması & İlaç Etki Noktaları</h1>
+    <p class="sub">Berrak hücreli RCC · VHL–HIF–mTOR → anjiyogenez → immün sinaps. Ajana dokun.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="section-label">Patogenez & Etki Noktaları</div>
+
+  <!-- ZONE A -->
+  <div class="zone A" id="zone-A">
+    <span class="ztag">1 · TÜMÖR HÜCRESİ İÇİ</span>
+    <div class="ztitle">VHL kaybı → HIF birikimi → büyüme sinyalleri</div>
+
+    <div class="node" id="n-vhl">
+      <span class="badge">ETKİ</span>
+      <div class="ntitle"><span class="ico">🧬</span> VHL kaybı / mutasyonu</div>
+      <div class="ndesc">Berrak hücreli RCC'nin ~%50'sinde. Normalde VHL, HIF-α'yı O₂ varlığında yıkar (ubikitin-proteazom). Kaybolunca HIF birikir.</div>
+    </div>
+
+    <div class="twocol">
+      <div class="node" id="n-hif" style="flex:2">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">📈</span> HIF-2α birikimi</div>
+        <div class="ndesc">Çekirdeğe girer; <b>VEGF, PDGF, TGF-α, EPO, CA-IX, GLUT-1</b> transkripsiyonunu açar → anjiyogenez + büyüme. (EPO → paraneoplastik <b>polisitemi</b>.)</div>
+      </div>
+      <div class="node" id="n-mtor" style="flex:1.1">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">⚙️</span> mTOR</div>
+        <div class="ndesc">PI3K/AKT/mTOR yolu HIF translasyonunu artırır.</div>
+      </div>
+    </div>
+
+    <div class="arrow" id="a-secrete"><div class="line"></div><div class="lbl">VEGF / PDGF salınımı ↓</div><div class="line"></div></div>
+  </div>
+
+  <!-- ZONE B -->
+  <div class="zone B" id="zone-B">
+    <span class="ztag">2 · ANJİYOGENEZ</span>
+    <div class="ztitle">Salgılanan faktörler yeni damar yapımını tetikler</div>
+
+    <div class="node" id="n-vegf">
+      <span class="badge">ETKİ</span>
+      <div class="ntitle"><span class="ico">💧</span> Dolaşan VEGF (ligand)</div>
+      <div class="ndesc">Tümörden salınan büyüme faktörü; endotel reseptörünü uyarmak için dolaşımda gezer.</div>
+    </div>
+
+    <div class="arrow"><div class="line"></div><div class="lbl">bağlanır →</div><div class="line"></div></div>
+
+    <div class="twocol">
+      <div class="node" id="n-vegfr" style="flex:2">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">🩸</span> VEGFR (endotel)</div>
+        <div class="ndesc">VEGFR-1/2/3 uyarılır → yeni damar (anjiyogenez) → tümör beslenir.</div>
+      </div>
+      <div class="node" id="n-extra" style="flex:1.3">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">🔧</span> MET · AXL · FGFR</div>
+        <div class="ndesc">Direnç/kaçış yolları. Çok hedefli TKI'ların ek hedefi.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZONE C -->
+  <div class="zone C" id="zone-C">
+    <span class="ztag">3 · İMMÜN SİNAPS</span>
+    <div class="ztitle">Tümör, T hücresine "fren" basar; checkpoint inhibitörü freni kaldırır</div>
+
+    <div class="twocol">
+      <div class="node" id="n-pdl1">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">🛑</span> Tümör PD-L1 / B7</div>
+        <div class="ndesc">Tümör yüzeyindeki frenleyici ligandlar.</div>
+      </div>
+      <div class="node" id="n-pd1">
+        <span class="badge">ETKİ</span>
+        <div class="ntitle"><span class="ico">🧷</span> T hücre PD-1</div>
+        <div class="ndesc">PD-L1 bağlanınca T hücresi susar (efektör fren).</div>
+      </div>
+    </div>
+    <div class="zlink">— ayrıca —</div>
+    <div class="node" id="n-ctla4">
+      <span class="badge">ETKİ</span>
+      <div class="ntitle"><span class="ico">🔒</span> CTLA-4 (priming / lenf nodu)</div>
+      <div class="ndesc">T hücre aktivasyonunun erken evresinde fren; B7'ye CD28'den önce bağlanır.</div>
+    </div>
+  </div>
+
+  <div class="section-label">İlaç Sınıfları — Dokun</div>
+  <div class="drugs" id="drugs"></div>
+
+  <div id="detail"></div>
+
+  <div class="legend">İçerik: Primer on Urology (Chapple &amp; Wein) + EAU 2024/25 · Belzutifan/güncel kombinasyonlar web ile doğrulandı.</div>
+</div>
+
+<div class="resetbar">
+  <div class="inner">
+    <button class="reset" onclick="clearAll()">↺ Temizle</button>
+    <div class="hint">Sarı = ilacın etki noktası</div>
+  </div>
+</div>
+
+<script>
+const DRUGS = [
+  {
+    key:'hif', color:'var(--c-hif)', name:'HIF-2α İnhibitörü', sub:'Belzutifan',
+    nodes:['n-hif'], arrows:['a-secrete'],
+    cls:'Sorunun kaynağına en yakın hedef — HIF-2α',
+    mech:'VHL kaybının ürettiği <b>HIF-2α</b>\'yı doğrudan inhibe eder → VEGF/PDGF/EPO transkripsiyonu kapanır. Mekanizma olarak diğer ajanlardan farklı: "aşağı akıştaki damarı" değil, <b>yukarıdaki sürücüyü</b> hedefler.',
+    drugs:'Belzutifan (Welireg) <b>120 mg/gün PO</b>.',
+    ae:'Hedefe bağlı (on-target): <b>anemi</b> (en sık) ve <b>hipoksi</b> — EPO/eritropoez baskılanır.',
+    jury:'FDA 2021: VHL hastalığına bağlı RCC (cerrahi adayı olmayan); 2023: <b>sporadik ileri ccRCC</b>, anti-PD-(L)1 + VEGF-TKI sonrası. LITESPARK-005: everolimusa karşı PFS ve ORR üstün, OS farkı anlamsız. EAU 2025: VHL ilişkili tümörlerde cerrahi adayı olmayanlara önerilir. "Neden anemi?" → HIF-2α blokajı EPO\'yu keser.'
+  },
+  {
+    key:'tki', color:'var(--c-tki)', name:'VEGFR Tirozin Kinaz İnh.', sub:'Sunitinib · Pazopanib · Aksitinib · Tivozanib',
+    nodes:['n-vegfr'], arrows:[],
+    cls:'Endotel hücresindeki VEGFR\'yi bloke eder',
+    mech:'Endotel hücresindeki <b>VEGFR</b> tirozin kinaz alanını inhibe eder → VEGF sinyali kesilir → anjiyogenez durur (anti-anjiyojenik). VEGF zaten salınmıştır; burada reseptör düzeyinde bloke edilir.',
+    drugs:'Sunitinib <b>50 mg/gün, 4 hafta açık/2 kapalı (4/2)</b> · Pazopanib <b>800 mg/gün</b> · Aksitinib <b>5 mg ×2/gün</b> (pembrolizumab kombinasyonunda) · Tivozanib (selektif VEGFR-1/2/3) · Sorafenib 400 mg ×2.',
+    ae:'<b>Hipertansiyon</b>, ishal, yorgunluk, <b>el-ayak sendromu</b>, hipotiroidi, ejeksiyon fraksiyonunda düşüş, proteinüri, mukozit.',
+    jury:'Sunitinib/pazopanib: IO alamayanlarda alternatif birinci basamak; COMPARZ → eşit etkinlik, pazopanib daha iyi tolere. Aksitinib tek başına 1. basamakta değil ama <b>pembrolizumab ile</b> standart kombinasyon (KEYNOTE-426). "HT neden?" → VEGF blokajı NO\'yu azaltır.'
+  },
+  {
+    key:'multi', color:'var(--c-multi)', name:'Çok Hedefli TKI', sub:'Cabozantinib · Lenvatinib',
+    nodes:['n-vegfr','n-extra'], arrows:[],
+    cls:'VEGFR + direnç yolları (MET/AXL/FGFR)',
+    mech:'VEGFR\'ye ek olarak <b>direnç/kaçış reseptörlerini</b> de bloke eder. Cabozantinib: <b>VEGFR + MET + AXL</b> (anti-anjiyojenik tedaviye dirençte yükselen yollar). Lenvatinib: <b>VEGFR + FGFR1-4 + PDGFR-α + KIT</b>.',
+    drugs:'Cabozantinib <b>60 mg/gün</b> (mono); nivolumab ile <b>40 mg/gün</b> · Lenvatinib <b>20 mg/gün</b> (pembrolizumab ile); everolimus ile 18 mg.',
+    ae:'HT, ishal, yorgunluk, el-ayak sendromu; çok hedefli olduğu için yan etki yükü yüksek (cabo G3+ ~%74).',
+    jury:'Cabozantinib MET/AXL hedefi → kemik metastazı ve TKI sonrası dirençte değerli (METEOR, CABOSUN). <b>Nivolumab+cabozantinib (CheckMate-9ER)</b> ve <b>pembrolizumab+lenvatinib (CLEAR, en yüksek ORR ~%71)</b> birinci basamak standart kombinasyonlar.'
+  },
+  {
+    key:'bev', color:'var(--c-bev)', name:'Anti-VEGF Monoklonal AK', sub:'Bevacizumab',
+    nodes:['n-vegf'], arrows:[],
+    cls:'Dolaşan VEGF ligandını yakalar',
+    mech:'Reseptörü değil, <b>dolaşan VEGF ligandını</b> bağlayıp nötralize eder → VEGFR\'ye ulaşamaz. (TKI\'lardan farkı: hedef reseptör değil, ligandın kendisi.)',
+    drugs:'Bevacizumab <b>10 mg/kg IV / 2 haftada bir</b> (klasik olarak interferon-α ile).',
+    ae:'HT, proteinüri, kanama, yara iyileşmesinde gecikme, tromboembolizm.',
+    jury:'IFN-α ile kombinasyonu eski; güncel EAU\'da birinci basamakta önerilmez. Mekanizma sorusu için kıymetli: "ligand vs reseptör" ayrımını netleştir.'
+  },
+  {
+    key:'mtor', color:'var(--c-mtor)', name:'mTOR İnhibitörü', sub:'Temsirolimus · Everolimus',
+    nodes:['n-mtor'], arrows:['a-secrete'],
+    cls:'PI3K/AKT/mTOR yolunu keser',
+    mech:'<b>mTOR</b> kinazını inhibe eder → HIF translasyonu ve hücre büyüme/proliferasyon sinyali azalır. Dolaylı olarak HIF-VEGF eksenini de zayıflatır.',
+    drugs:'Temsirolimus <b>25 mg IV / hafta</b> (IV) · Everolimus <b>10 mg/gün PO</b>.',
+    ae:'Asteni, döküntü, anemi, mukozit, <b>hiperlipidemi, hiperglisemi</b>, pnömonit, immünsüpresyon.',
+    jury:'Temsirolimus eskiden kötü-risk 1. basamak (Motzer/Hudes) ama <b>EAU\'da birinci basamaktan çıkarıldı</b>. Everolimus ileri basamak; LITESPARK-005 ve METEOR\'da karşılaştırma kolu. "Hangisi IV?" → temsirolimus.'
+  },
+  {
+    key:'pd1', color:'var(--c-pd1)', name:'PD-1 İnhibitörü', sub:'Nivolumab · Pembrolizumab',
+    nodes:['n-pd1'], arrows:[],
+    cls:'T hücresindeki PD-1 frenini kaldırır',
+    mech:'T hücresi yüzeyindeki <b>PD-1</b>\'i bloke eder → tümör PD-L1\'i T hücresini susturamaz → sitotoksik T yanıtı yeniden aktive olur (efektör fazda fren kaldırma).',
+    drugs:'Nivolumab <b>3 mg/kg</b> (veya 240/480 mg sabit) IV · Pembrolizumab <b>200 mg/3 haftada bir</b> (veya 400 mg/6 hafta).',
+    ae:'<b>İmmün ilişkili:</b> kolit, pnömonit, hepatit, nefrit, endokrinopati (tiroid, hipofizit). Yönetim: steroid + tedavi arası.',
+    jury:'Birinci basamak kombinasyonların belkemiği: <b>nivolumab+ipilimumab (CheckMate-214)</b>, <b>pembrolizumab+aksitinib (KEYNOTE-426)</b>, <b>pembrolizumab+lenvatinib</b>, <b>nivolumab+cabozantinib</b>. Nivolumab monoterapi 1-2 basamak sonrası. Adjuvan <b>pembrolizumab KEYNOTE-564</b> (yüksek riskli nefrektomi sonrası).'
+  },
+  {
+    key:'pdl1', color:'var(--c-pdl1)', name:'PD-L1 İnhibitörü', sub:'Avelumab · Atezolizumab',
+    nodes:['n-pdl1'], arrows:[],
+    cls:'Tümördeki PD-L1 ligandını bloke eder',
+    mech:'Aynı freni <b>tümör tarafından</b> kaldırır: tümör yüzeyindeki <b>PD-L1</b>\'i bağlayarak PD-1 ile etkileşimini engeller.',
+    drugs:'Avelumab <b>10 mg/kg IV / 2 haftada bir</b> (aksitinib ile) · Atezolizumab (bevacizumab ile, non-clear/sarkomatoid çalışmalarda).',
+    ae:'PD-1 inhibitörlerine benzer immün ilişkili yan etkiler; infüzyon reaksiyonu.',
+    jury:'Avelumab+aksitinib (JAVELIN) PFS gösterdi ama <b>OS gösteremediği için birinci basamak önceliğini kaybetti</b> — sık sorulan çelişki noktası. "PD-1 vs PD-L1 farkı?" → hedefin T hücresinde mi tümörde mi olduğu.'
+  },
+  {
+    key:'ctla', color:'var(--c-ctla)', name:'CTLA-4 İnhibitörü', sub:'Ipilimumab',
+    nodes:['n-ctla4'], arrows:[],
+    cls:'T hücre primingindeki erken freni kaldırır',
+    mech:'<b>CTLA-4</b>\'ü bloke eder → lenf nodunda T hücre aktivasyonunun (priming) erken evresindeki freni kaldırır. PD-1\'den farklı evrede etki eder; bu yüzden nivolumab ile <b>tamamlayıcı</b>.',
+    drugs:'Ipilimumab <b>1 mg/kg IV / 3 haftada bir × 4 doz</b> + nivolumab 3 mg/kg; ardından nivolumab idamesi.',
+    ae:'En yüksek immün ilişkili toksisite (kolit, hipofizit, hepatit); kombinasyonda G3+ ~%46.',
+    jury:'<b>Nivolumab+ipilimumab (CheckMate-214)</b> = IMDC <b>orta/kötü risk</b> birinci basamak standardı (iyi-riskte tercih edilmez). "İki checkpoint neden birlikte?" → CTLA-4 priming evresinde, PD-1 efektör evrede; farklı evreler sinerjik.'
+  }
+];
+
+const drugWrap=document.getElementById('drugs');
+const detail=document.getElementById('detail');
+let activeKey=null;
+
+DRUGS.forEach(d=>{
+  const b=document.createElement('button');
+  b.className='drug'; b.id='drug-'+d.key;
+  b.style.setProperty('--accent', d.color);
+  b.innerHTML=`<span class="dot" style="background:${d.color}"></span>
+    <span>${d.name}<span class="dsub">${d.sub}</span></span>
+    <span class="arrowi">›</span>`;
+  b.onclick=()=>select(d.key);
+  drugWrap.appendChild(b);
+});
+
+function clearHL(){
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('glow','dim'));
+  document.querySelectorAll('.arrow').forEach(a=>a.classList.remove('glow','dim'));
+}
+function select(key){
+  if(activeKey===key){clearAll();return;}
+  activeKey=key;
+  const d=DRUGS.find(x=>x.key===key);
+  document.querySelectorAll('.drug').forEach(el=>el.classList.remove('active'));
+  document.getElementById('drug-'+key).classList.add('active');
+  clearHL();
+  document.querySelectorAll('.node').forEach(n=>n.classList.add('dim'));
+  document.querySelectorAll('.arrow').forEach(a=>a.classList.add('dim'));
+  d.nodes.forEach(id=>{const n=document.getElementById(id);n.classList.remove('dim');n.classList.add('glow');});
+  d.arrows.forEach(id=>{const a=document.getElementById(id);if(a){a.classList.remove('dim');a.classList.add('glow');}});
+  detail.innerHTML=`
+    <h3 style="color:${d.color}">${d.name}</h3>
+    <p class="dclass">${d.cls}</p>
+    <div class="row"><div class="k" style="color:${d.color}">Mekanizma</div><div class="v">${d.mech}</div></div>
+    <div class="row"><div class="k" style="color:${d.color}">İlaçlar & Doz</div><div class="v">${d.drugs}</div></div>
+    <div class="row"><div class="k" style="color:${d.color}">Yan Etki / Dikkat</div><div class="v">${d.ae}</div></div>
+    <div class="jury"><div class="jl">⚖️ Jüri Savunma Notu</div>${d.jury}</div>`;
+  detail.classList.add('show');
+  setTimeout(()=>detail.scrollIntoView({behavior:'smooth',block:'nearest'}),120);
+}
+function clearAll(){
+  activeKey=null;
+  document.querySelectorAll('.drug').forEach(el=>el.classList.remove('active'));
+  clearHL();
+  detail.classList.remove('show');
+  setTimeout(()=>{detail.innerHTML='';},350);
+}
+</script>
+</body>
+</html>
