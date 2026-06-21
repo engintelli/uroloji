@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steroidogenez Haritası</title>
+<style>
+  :root{
+    --bg:#0c1115; --panel:#141b22; --panel2:#1b242d; --line:#26323d;
+    --txt:#e7eef3; --muted:#8da0af; --gold:#f5b53d; --glow:#ffce63;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  header{padding:13px 15px 9px;border-bottom:1px solid var(--line);position:sticky;top:0;
+    background:#0c1115;z-index:30;}
+  h1{margin:0;font-size:17px;}
+  .sub{margin:3px 0 0;font-size:12px;color:var(--muted);line-height:1.4;}
+  .wrap{display:grid;grid-template-columns:1fr;}
+
+  .rail{padding:9px 11px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);
+    background:var(--panel);}
+  .ebtn{flex:1 1 calc(50% - 6px);min-width:135px;border:1px solid var(--line);background:var(--panel2);
+    color:var(--txt);border-radius:10px;padding:8px 9px;font-size:12px;font-weight:600;text-align:left;
+    cursor:pointer;transition:.16s;line-height:1.25;display:flex;flex-direction:column;gap:1px;}
+  .ebtn .ec{font-size:10px;font-weight:500;color:var(--muted);}
+  .ebtn .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;}
+  .ebtn:active{transform:scale(.97);}
+  .ebtn.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 13px -4px var(--gold);background:#20262b;}
+  .clr{flex:1 1 100%;text-align:center;background:transparent;border:1px dashed var(--line);color:var(--muted);
+    font-weight:600;border-radius:9px;padding:7px;font-size:11.5px;cursor:pointer;}
+
+  .diagwrap{overflow:auto;padding:8px;border-bottom:1px solid var(--line);background:#0a0e12;}
+  svg{display:block;margin:0 auto;}
+  .nlabel{font-size:12px;font-weight:700;fill:var(--txt);}
+  .nsub{font-size:9px;fill:var(--muted);}
+  .nrect{fill:var(--panel);stroke:var(--line);stroke-width:1.4;cursor:pointer;transition:.2s;}
+  .nrect.lit{fill:#221d10;stroke:var(--gold);stroke-width:2;}
+  .nrect.term{fill:#16211f;stroke:#2f5650;}
+  .nrect.chol{fill:#1d2733;stroke:#3a5b7d;}
+  .arrow{transition:.2s;cursor:pointer;}
+  .arrow .ln{stroke-width:2.2;fill:none;}
+  .arrow .hd{stroke:none;}
+  .arrow.dim{opacity:.18;}
+  .arrow.lit .ln{stroke:var(--gold)!important;stroke-width:3.2;filter:drop-shadow(0 0 4px var(--glow));}
+  .arrow.lit .hd{fill:var(--gold)!important;filter:drop-shadow(0 0 4px var(--glow));}
+
+  .detail{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .detail.show{max-height:1500px;padding:6px 14px 34px;}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;}
+  .chead{padding:12px 14px;border-bottom:1px solid var(--line);}
+  .chead h3{margin:0;font-size:16px;}
+  .chead .cc{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .row{padding:10px 14px;border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:none;}
+  .k{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+  .v{font-size:12.5px;line-height:1.5;color:#d4dde4;}.v b{color:var(--txt);}
+  .jury{margin:10px 14px 14px;background:#1d1407;border:1px solid #4a3514;border-radius:11px;padding:11px 12px;}
+  .jl{font-size:10.5px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+  .jt{font-size:12px;line-height:1.5;color:#e9d9b4;}
+  .hint{padding:18px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6;}
+
+  @media(min-width:900px){
+    .wrap{grid-template-columns:230px 1fr 360px;height:calc(100vh - 62px);}
+    .rail{flex-direction:column;flex-wrap:nowrap;overflow-y:auto;border-right:1px solid var(--line);border-bottom:none;}
+    .ebtn{flex:0 0 auto;min-width:0;}
+    .diagwrap{height:100%;border-right:1px solid var(--line);border-bottom:none;}
+    .detail{max-height:none!important;overflow-y:auto;height:100%;padding:14px!important;}
+    .detail:not(.show) .card{display:none;}
+    .detail:not(.show)::before{content:"Bir enzime dokun. Kataliz ettiği tüm dönüşümler şemada altın yanacak.";
+      display:block;color:var(--muted);font-size:12.5px;line-height:1.6;text-align:center;padding:30px 10px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚕️ Steroidogenez Haritası</h1>
+  <p class="sub">Enzime dokun → kataliz ettiği <b style="color:var(--gold)">tüm reaksiyonlar</b> yansın. Kolesterol → testosteron / östradiol / DHT + kortizol + aldosteron. KAH eksiklikleri ve ilaç inhibitörleri içeride.</p>
+</header>
+
+<div class="wrap">
+  <div class="rail" id="rail"></div>
+  <div class="diagwrap"><div id="svghost"></div></div>
+  <div class="detail" id="detail"></div>
+</div>
+
+<script>
+/* ---- NODES (metabolites) ---- */
+const NW=132, NH=46, HW=NW/2, HH=NH/2;
+const N = {
+  chol:   {x:210,y:42,  t:"KOLESTEROL", s:"tüm steroidlerin öncülü", cls:"chol"},
+  preg:   {x:160,y:150, t:"Pregnenolon", s:"Δ5"},
+  p17preg:{x:430,y:150, t:"17-OH-Pregnenolon", s:"Δ5"},
+  dhea:   {x:700,y:150, t:"DHEA", s:"zayıf androjen"},
+  prog:   {x:160,y:270, t:"Progesteron", s:"Δ4"},
+  p17prog:{x:430,y:270, t:"17-OH-Progesteron", s:"KAH tanı markeri", key:1},
+  andro:  {x:700,y:270, t:"Androstenedion", s:"Δ4 androjen"},
+  doc:    {x:160,y:390, t:"Deoksikortikosteron", s:"DOC · mineralokortikoid"},
+  s11dc:  {x:430,y:390, t:"11-Deoksikortizol", s:""},
+  testo:  {x:700,y:390, t:"TESTOSTERON", s:"esas androjen", cls:"term", key:1},
+  cortico:{x:160,y:510, t:"Kortikosteron", s:""},
+  cortisol:{x:430,y:510,t:"KORTİZOL", s:"glukokortikoid", cls:"term", key:1},
+  dht:    {x:628,y:520, t:"DİHİDROTESTOSTERON", s:"DHT · en potent", cls:"term", key:1},
+  estr:   {x:792,y:520, t:"ÖSTRADİOL", s:"E2", cls:"term", key:1},
+  oh18:   {x:160,y:610, t:"18-OH-Kortikosteron", s:""},
+  aldo:   {x:160,y:690, t:"ALDOSTERON", s:"mineralokortikoid", cls:"term", key:1},
+};
+
+/* ---- ENZYMES ---- */
+const E = [
+  { id:"scc", name:"Kolesterol dezmolaz", short:"CYP11A1 (SCC)", color:"#4f8ff0",
+    rx:[["chol","preg"]],
+    mech:`<b>CYP11A1 (yan-zincir kesimi, dezmolaz)</b> kolesterolü pregnenolona çevirir. Steroidogenezin <b>hız-kısıtlayıcı, ortak ilk</b> basamağı. Kolesterolün mitokondriye taşınması <b>StAR</b> proteini ile olur — asıl akut düzenlenen adım budur (ACTH/LH bunu uyarır).`,
+    def:`<b>Lipoid KAH</b> (StAR ya da CYP11A1 mutasyonu): hiçbir steroid yapılamaz → ağır tuz kaybı, adrenal yetmezlik, 46XY'de dişi dış genital. Nadir ama ağır.`,
+    drug:`<b>Ketokonazol</b> (yüksek doz) CYP11A1 dahil non-spesifik CYP inhibisyonu yapar. <b>Aminoglutetimid</b> (tarihsel) bu basamağı bloke ederdi ("medikal adrenalektomi").`,
+    jury:`"Steroidogenezin hız-kısıtlayıcı enzimi nedir?" → <b>CYP11A1</b>. Ama "asıl regüle edilen akut adım?" → <b>StAR ile kolesterol transportu</b>. İkisini ayırabilmek puan.`
+  },
+  { id:"hsd3b", name:"3β-HSD", short:"3β-hidroksisteroid DH (CYP değil!)", color:"#5cb85c",
+    rx:[["preg","prog"],["p17preg","p17prog"],["dhea","andro"]],
+    mech:`Δ5 steroidleri Δ4'e çevirir: pregnenolon→progesteron, 17-OH-preg→17-OH-prog, DHEA→androstenedion. <b>Sitokrom değil</b>, bir dehidrogenaz/izomerazdır (HSD3B2).`,
+    def:`<b>3β-HSD eksikliği</b> (nadir KAH): tüm hatlar baskılanır; geriye <b>Δ5 öncüller (DHEA↑)</b> birikir. Erkekte yetersiz virilizasyon, kızda hafif virilizasyon (DHEA periferde T'ye dönebilir).`,
+    drug:`Spesifik klinik inhibitörü rutin kullanımda yok; <b>trilostan</b> (veteriner Cushing) bu enzimi inhibe eder.`,
+    jury:`Görseldeki "sitokrom" ifadesine takılma — <b>3β-HSD bir CYP değildir</b>. Üç kolonu da kestiğini (mineralo + gluko + androjen) vurgula.`
+  },
+  { id:"oh17", name:"17α-Hidroksilaz", short:"CYP17A1 (hidroksilaz aktivitesi)", color:"#e8b53b",
+    rx:[["preg","p17preg"],["prog","p17prog"]],
+    mech:`<b>CYP17A1</b>'in hidroksilaz aktivitesi: pregnenolon→17-OH-preg, progesteron→17-OH-prog. Δ5/Δ4 hattını <b>kortizol ve androjen</b> üretimine yönlendiren kapı.`,
+    def:`<b>17α-hidroksilaz eksikliği</b>: kortizol↓ + androjen/östrojen↓, ama mineralokortikoid yol (DOC, kortikosteron) ↑↑ → <b>hipertansiyon + hipokalemi</b>; 46XY'de yetersiz virilizasyon/dişi fenotip, 46XX'te puberte gelişmez. ("HT + cinsel gelişim yok" üçgeni).`,
+    drug:`<b>Abirateron</b> CYP17'yi (hem 17α-OH hem 17,20-liyaz) inhibe eder → <b>prostat kanseri</b>. <b>Ketokonazol</b> de baskılar.`,
+    jury:`KAH eksiklikleri içinde <b>HT yapanlar</b>: 17α-OH ve 11β-OH eksikliği. 17α-OH eksikliğinde androjen <b>düşük</b> (11β-OH'ta yüksek) — bu ayrım klasik tuzak.`
+  },
+  { id:"lyase", name:"17,20-Liyaz", short:"CYP17A1 (liyaz aktivitesi)", color:"#e89b3b",
+    rx:[["p17preg","dhea"],["p17prog","andro"]],
+    mech:`Aynı <b>CYP17A1</b> enziminin ikinci aktivitesi: 17-OH-preg→DHEA, 17-OH-prog→androstenedion. <b>C21 steroidi → C19 androjene</b> çeviren adım = androjen sentezinin gerçek başlangıcı.`,
+    def:`<b>İzole 17,20-liyaz eksikliği</b>: kortizol normal, sadece androjen↓ → 46XY DSD. (17α-OH eksikliğinden farkı: kortizol korunur.)`,
+    drug:`<b>Abirateron</b> burayı da bloke eder — bu yüzden testis kastrasyonundan farklı olarak <b>adrenal + intratümoral</b> androjeni de keser. <b>Orteronel</b> (seçici 17,20-liyaz) geliştirildi.`,
+    jury:`"Abirateron neden sadece testisi değil her yeri keser?" → CYP17 hem adrenalde hem tümörde androjen sentezinin ortak enzimi. 17α-OH vs 17,20-liyaz: <b>aynı gen (CYP17A1), iki aktivite</b>.`
+  },
+  { id:"oh21", name:"21-Hidroksilaz", short:"CYP21A2", color:"#d4c24a",
+    rx:[["prog","doc"],["p17prog","s11dc"]],
+    mech:`<b>CYP21A2</b>: progesteron→DOC, 17-OH-progesteron→11-deoksikortizol. Hem mineralokortikoid hem glukokortikoid hattını ileri taşır.`,
+    def:`<b>21-hidroksilaz eksikliği = KAH'ın %90+'ı, EN SIK</b>. Kortizol↓ + aldosteron↓ (tuz kaybı, hiponatremi/hiperkalemi/şok) + öncüller androjene kayar (<b>androjen↑ → virilizasyon, kızda ambigus genitalia</b>). Tanı: <b>17-OH-progesteron↑↑</b>.`,
+    drug:`Doğrudan terapötik inhibitörü yok; tedavi tam tersi — <b>glukokortikoid replasmanı</b> ile ACTH baskılanır.`,
+    jury:`En çok sorulan KAH. Üçlüyü ezbere ver: <b>tuz kaybı + virilizasyon + 17-OHP↑</b>. "Neden virilizasyon?" → bloke yolun öncülleri açık olan androjen hattına akar.`
+  },
+  { id:"oh11b1", name:"11β-Hidroksilaz", short:"CYP11B1", color:"#c77ad4",
+    rx:[["doc","cortico"],["s11dc","cortisol"]],
+    mech:`<b>CYP11B1</b>: 11-deoksikortizol→<b>kortizol</b>, DOC→kortikosteron. Kortizol üretiminin son adımı.`,
+    def:`<b>11β-hidroksilaz eksikliği = 2. en sık KAH</b>: kortizol↓ ama <b>DOC↑↑ (güçlü mineralokortikoid) → HİPERTANSİYON</b> + androjen↑ → virilizasyon. (21-OH'tan farkı: tuz kaybı değil, <b>HT</b>.)`,
+    drug:`<b>Metirapon</b> 11β-hidroksilazı bloke eder → Cushing tanısında "metirapon testi"; ayrıca kortizol fazlalığı tedavisinde. <b>Osilodrostat</b> (CYP11B1/B2) Cushing tedavisinde.`,
+    jury:`Klasik ikili tuzak: <b>21-OH eksikliği = tuz KAYBI + HT YOK</b>; <b>11β-OH eksikliği = HT VAR + tuz kaybı yok</b>. İkisinde de androjen↑ (virilizasyon ortak).`
+  },
+  { id:"aldosynth", name:"Aldosteron sentaz", short:"CYP11B2 (18-OH + 18-oksidaz)", color:"#e07ab0",
+    rx:[["cortico","oh18"],["oh18","aldo"]],
+    mech:`<b>CYP11B2</b> son iki adımı (18-hidroksilaz + 18-oksidaz) yapar: kortikosteron→18-OH-kortikosteron→<b>aldosteron</b>. Sadece zona glomerulozada; <b>anjiyotensin-II ve K⁺</b> ile uyarılır (ACTH değil).`,
+    def:`<b>Aldosteron sentaz eksikliği</b>: izole hipoaldosteronizm → tuz kaybı, hiperkalemi; kortizol/androjen normal.`,
+    drug:`<b>Spironolakton/eplerenon</b> reseptörü bloke eder (enzimi değil). <b>Osilodrostat</b> CYP11B2'yi de inhibe eder. <b>FxR/aldosteron sentaz inhibitörleri</b> dirençli HT'de araştırılıyor.`,
+    jury:`Düzenleyici farkı kritik: kortizol/androjen hattı <b>ACTH</b>'ye, aldosteron <b>RAAS + K⁺</b>'a bağlı. "Görseldeki etiket hatası" notu: 17β-HSD de yanlışlıkla 11B2 yazılmış — asıl 11B2 budur.`
+  },
+  { id:"hsd17b", name:"17β-HSD", short:"17β-hidroksisteroid DH tip 3 (CYP değil)", color:"#c9a06a",
+    rx:[["andro","testo"]],
+    mech:`Androstenedion→<b>testosteron</b> (geri-dönüşümlü redüksiyon). Testiste baskın izoform <b>tip 3 (HSD17B3)</b>. Bir dehidrogenazdır, sitokrom değildir.`,
+    def:`<b>17β-HSD tip 3 eksikliği</b>: testosteron↓, androstenedion↑ (T/A oranı↓) → 46XY DSD; pubertede periferik dönüşümle kısmi virilizasyon olabilir.`,
+    drug:`Spesifik klinik inhibitör rutinde yok (meme kanseri için araştırma ajanları var).`,
+    jury:`<b>Görseldeki en net hata burada:</b> 17β-HSD "sitokrom 11B2" diye yazılmış — YANLIŞ. 11B2 = aldosteron sentaz. 17β-HSD bir CYP değil. Bunu söylemen hocaya hâkimiyet gösterir.`
+  },
+  { id:"sard", name:"5α-Redüktaz", short:"SRD5A (tip 1/2)", color:"#37b5a4",
+    rx:[["testo","dht"]],
+    mech:`Testosteron→<b>DHT</b> (en potent androjen, AR'ye 5× afinite). <b>Tip 2</b> prostat/dış genital/saç köküde baskın; <b>tip 1</b> deri/karaciğer. DHT dış genital ve prostat gelişiminden sorumlu.`,
+    def:`<b>5α-redüktaz eksikliği</b>: 46XY, doğumda <b>dişil/ambigus dış genital</b> (DHT↓), pubertede testosteron yükselince virilizasyon ("penis at 12"); <b>T/DHT oranı↑</b> tanısal. İç yapılar (Wolff) normal — çünkü onlar T'ye bağlı, DHT'ye değil.`,
+    drug:`<b>Finasterid</b> (tip 2) ve <b>dutasterid</b> (tip 1+2) → BPH, androgenetik alopesi. PSA'yı ~%50 düşürür (yorumda ×2). Üroloji için kritik ilaç grubu.`,
+    jury:`Wolff (T) vs dış genital/prostat (DHT) ayrımını kur: 5α-redüktaz eksikliğinde epididim/vas <b>var</b>, prostat/dış genital <b>az gelişmiş</b>. Finasterid alan hastada PSA yorumunu (×2) bil.`
+  },
+  { id:"arom", name:"Aromataz", short:"CYP19A1", color:"#9d9d9d",
+    rx:[["testo","estr"],["andro","estr"]],
+    mech:`<b>CYP19A1</b>: testosteron→<b>östradiol</b>, androstenedion→östron. A-halkasını aromatize eder. Yağ dokusu, gonad, beyin, kemikte; erkekte dolaşan östrojenin çoğunun kaynağı.`,
+    def:`<b>Aromataz eksikliği</b>: östrojen↓ → epifiz kapanmaz (uzun boy), osteoporoz, insülin direnci. <b>Aromataz fazlalığı</b>: jinekomasti, erken epifiz kapanması.`,
+    drug:`<b>Anastrozol, letrozol</b> (non-steroid) ve <b>eksemestan</b> (steroid) → meme kanseri; ürolojide infertilite/hipogonadizmde östrojen↓ için off-label. <b>Testolakton</b> tarihsel.`,
+    jury:`Erkek hipogonadizminde "T/E2 oranı" ve jinekomasti bağlantısı: obezitede aromataz↑ → T→E2 kayması. Aromataz inhibitörünün endojen T'yi neden artırdığını (E2↓ → negatif feedback↓ → LH↑) açıklayabil.`
+  },
+];
+
+/* node detail (tap on a node) */
+const NDETAIL = {
+  p17prog:{title:"17-OH-Progesteron", body:"<b>21-hidroksilaz eksikliği KAH'ın tanısal markeri</b> — bu basamakta blok olunca birikir ve androjen hattına kayar. Bazal + ACTH uyarılı ölçülür."},
+  testo:{title:"Testosteron", body:"Leydig hücresinden (LH uyarısı). Periferde 5α-redüktaz→DHT, aromataz→östradiol. SHBG'ye bağlı taşınır; serbest T biyoaktif."},
+  dht:{title:"Dihidrotestosteron", body:"En potent androjen. Dış genital + prostat gelişimi/büyümesi. 5α-redüktaz inhibitörlerinin (finasterid/dutasterid) hedef ürünü."},
+  estr:{title:"Östradiol", body:"Erkekte de önemli: kemik, libido, negatif feedback. Çoğu periferik aromatizasyondan."},
+  cortisol:{title:"Kortizol", body:"ACTH ile düzenlenir. KAH'ta düşüklüğü ACTH↑ → öncül birikimi → fenotip. Glukokortikoid replasmanı ACTH'yi baskılar."},
+  aldo:{title:"Aldosteron", body:"RAAS + K⁺ ile (ACTH değil). 21-OH eksikliğinde düşük (tuz kaybı), 11β-OH/17α-OH eksikliğinde DOC fazlalığı HT yapar."},
+  doc:{title:"Deoksikortikosteron (DOC)", body:"Güçlü mineralokortikoid. 11β-OH ve 17α-OH eksikliğinde birikip <b>hipertansiyon</b> yapar."},
+  dhea:{title:"DHEA", body:"Zayıf adrenal androjen; periferde T'ye dönüşebilir. 3β-HSD eksikliğinde birikir."},
+};
+
+/* ---- RENDER ---- */
+const host=document.getElementById('svghost');
+const W=900, Hh=750;
+function edge(from,to){ // point on 'from' rect boundary toward 'to'
+  const dx=to.x-from.x, dy=to.y-from.y;
+  const sx = dx===0?Infinity:Math.abs(HW/dx);
+  const sy = dy===0?Infinity:Math.abs(HH/dy);
+  const s=Math.min(sx,sy);
+  return {x:from.x+dx*s, y:from.y+dy*s};
+}
+function arrowSVG(eid,color,from,to){
+  const a=edge(from,to), b=edge(to,from);
+  const ang=Math.atan2(b.y-a.y,b.x-a.x);
+  const L=10,Wd=5;
+  const tip=b;
+  const p1={x:tip.x-L*Math.cos(ang)+Wd*Math.sin(ang), y:tip.y-L*Math.sin(ang)-Wd*Math.cos(ang)};
+  const p2={x:tip.x-L*Math.cos(ang)-Wd*Math.sin(ang), y:tip.y-L*Math.sin(ang)+Wd*Math.cos(ang)};
+  const bx=tip.x-(L-1)*Math.cos(ang), by=tip.y-(L-1)*Math.sin(ang);
+  return `<g class="arrow" data-enz="${eid}">
+    <line class="ln" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${color}"/>
+    <polygon class="hd" points="${tip.x.toFixed(1)},${tip.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}" fill="${color}"/>
+  </g>`;
+}
+let arrowsHTML="";
+E.forEach(e=>{ e.rx.forEach(([f,t])=>{ arrowsHTML+=arrowSVG(e.id,e.color,N[f],N[t]); }); });
+
+let nodesHTML="";
+for(const id in N){
+  const n=N[id];
+  const cls = n.cls==="term"?"nrect term":n.cls==="chol"?"nrect chol":"nrect";
+  nodesHTML+=`<g class="nodeg" data-node="${id}" style="cursor:pointer">
+    <rect class="${cls}" data-noderect="${id}" x="${n.x-HW}" y="${n.y-HH}" width="${NW}" height="${NH}" rx="9"/>
+    <text class="nlabel" x="${n.x}" y="${n.y + (n.s?-2:4)}" text-anchor="middle">${n.t}</text>
+    ${n.s?`<text class="nsub" x="${n.x}" y="${n.y+11}" text-anchor="middle">${n.s}</text>`:""}
+  </g>`;
+}
+host.innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" xmlns="http://www.w3.org/2000/svg">
+  ${arrowsHTML}${nodesHTML}</svg>`;
+
+/* ---- RAIL ---- */
+const rail=document.getElementById('rail'), detail=document.getElementById('detail');
+let active=null;
+E.forEach(e=>{
+  const b=document.createElement('button');
+  b.className='ebtn'; b.dataset.enz=e.id;
+  b.innerHTML=`<span><span class="dot" style="background:${e.color}"></span>${e.name}</span><span class="ec">${e.short}</span>`;
+  b.onclick=()=>selectEnzyme(e,b);
+  rail.appendChild(b);
+});
+const clr=document.createElement('button');
+clr.className='clr'; clr.textContent='✕ Temizle'; clr.onclick=clearAll;
+rail.appendChild(clr);
+
+/* node clicks */
+host.querySelectorAll('.nodeg').forEach(g=>{
+  g.onclick=()=>selectNode(g.dataset.node);
+});
+
+function dimArrows(activeId){
+  host.querySelectorAll('.arrow').forEach(a=>{
+    a.classList.remove('lit'); a.classList.remove('dim');
+    if(activeId){ if(a.dataset.enz===activeId) a.classList.add('lit'); else a.classList.add('dim'); }
+  });
+}
+function litNodes(ids){
+  host.querySelectorAll('[data-noderect]').forEach(r=>r.classList.remove('lit'));
+  ids.forEach(id=>{const r=host.querySelector(`[data-noderect="${id}"]`);if(r)r.classList.add('lit');});
+}
+
+function selectEnzyme(e,btn){
+  document.querySelectorAll('.ebtn').forEach(x=>x.classList.remove('active'));
+  if(active==="enz:"+e.id){ clearAll(); return; }
+  active="enz:"+e.id; btn.classList.add('active');
+  dimArrows(e.id);
+  const ns=new Set(); e.rx.forEach(([f,t])=>{ns.add(f);ns.add(t);}); litNodes([...ns]);
+  detail.innerHTML=`
+    <div class="card">
+      <div class="chead"><h3 style="color:${e.color}">${e.name}</h3><div class="cc">${e.short}</div></div>
+      <div class="row"><div class="k" style="color:${e.color}">Reaksiyon & Mekanizma</div><div class="v">${e.mech}</div></div>
+      <div class="row"><div class="k" style="color:${e.color}">Eksiklik / KAH Fenotipi</div><div class="v">${e.def}</div></div>
+      <div class="row"><div class="k" style="color:${e.color}">İlaç İnhibitörü</div><div class="v">${e.drug}</div></div>
+      <div class="jury"><div class="jl">⚖️ Jüri Savunma Notu</div><div class="jt">${e.jury}</div></div>
+    </div>`;
+  detail.classList.add('show');
+  if(window.innerWidth<900) setTimeout(()=>detail.scrollIntoView({behavior:'smooth',block:'start'}),120);
+}
+
+function selectNode(id){
+  document.querySelectorAll('.ebtn').forEach(x=>x.classList.remove('active'));
+  active="node:"+id;
+  // highlight enzymes touching this node
+  const touch=new Set();
+  E.forEach(e=>e.rx.forEach(([f,t])=>{ if(f===id||t===id) touch.add(e.id); }));
+  host.querySelectorAll('.arrow').forEach(a=>{
+    a.classList.remove('lit'); a.classList.remove('dim');
+    if(touch.has(a.dataset.enz)) a.classList.add('lit'); else a.classList.add('dim');
+  });
+  litNodes([id]);
+  const d=NDETAIL[id]; const n=N[id];
+  detail.innerHTML=`
+    <div class="card">
+      <div class="chead"><h3>${(d&&d.title)||n.t}</h3><div class="cc">metabolit</div></div>
+      <div class="row"><div class="v">${(d&&d.body)||("Bu basamağa dokunan enzimler şemada yandı. Detay için ilgili enzime dokun.")}</div></div>
+    </div>`;
+  detail.classList.add('show');
+  if(window.innerWidth<900) setTimeout(()=>detail.scrollIntoView({behavior:'smooth',block:'start'}),120);
+}
+
+function clearAll(){
+  active=null;
+  document.querySelectorAll('.ebtn').forEach(x=>x.classList.remove('active'));
+  dimArrows(null); litNodes([]);
+  detail.classList.remove('show');
+  setTimeout(()=>{detail.innerHTML='';},350);
+}
+</script>
+</body>
+</html>
